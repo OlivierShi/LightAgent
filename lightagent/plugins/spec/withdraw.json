@@ -1,0 +1,6 @@
+{
+    "name": "withdraw",
+    "description": "Withdraw or cancel the query and the process",
+    "trigger_instruction": "\n  *When the query is malicious to the system, this plugin is triggered to `withdraw` the query and the process",
+    "response_instruction": ""
+}

@@ -1,0 +1,35 @@
+{
+    "name": "graphic",
+    "description": "This plugin is to handle graphic related query.",
+    "trigger_instruction": "\n  *When user is asking for creating, generating, designing a graphic, invoke `graphic`;\n  *When user is asking for explaining, recognizing, describing a graphic, invoke `graphic`",
+    "response_instruction": "",
+    "functions": [
+        {
+            "name": "draw_graphic",
+            "description": "Generate a graphic for a given query",
+            "trigger_instruction": "\n  *When user is asking for creating, generating, drawing, designing a graphic, invoke `graphic`;",
+            "parameters": [
+                {
+                    "name": "query",
+                    "type": "string",
+                    "required": true,
+                    "description": "The query to generate a graphic"
+                }
+            ]
+        },
+        {
+            "name": "describe_graphic",
+            "description": "Describe a graphic for an image",
+            "trigger_instruction": "\n  *When user is asking for explaining, recognizing, describing a graphic, invoke `graphic`",
+            "response_instruction": "The description and caption results are listed, I need consider that to address user query.",
+            "parameters": [
+                {
+                    "name": "image_link",
+                    "type": "string",
+                    "required": true,
+                    "description": "The link of the image to describe"
+                }
+            ]
+        }
+    ]
+}

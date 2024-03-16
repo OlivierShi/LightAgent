@@ -1,0 +1,35 @@
+{
+    "name": "web_search",
+    "description": "Search the web for a given query",
+    "trigger_instruction": "\n  *When user is seeking information or I need more information to address user query, invoke `web_search`;\n  *When user is seeking factual information, historical context, detailed explanations of concepts, or biographical details, invoke `web_search`;\n  *If the user query is vague or having no explicit intent, invoke `web_search`;",
+    "response_instruction": "The web search results are listed, I need consider that to address user query.",
+    "functions": [
+        {
+            "name": "search_news",
+            "description": "Search the web for a given query",
+            "trigger_instruction": "\n  *When user is seeking information or I need more information to address user query, invoke `search_news`;\n  *If the user query is vague or having no explicit intent, invoke `search_news`;",
+            "parameters": [
+                {
+                    "name": "query",
+                    "type": "string",
+                    "required": true,
+                    "description": "The query to search"
+                }
+            ]
+        },
+        {
+            "name": "search_wikipedia",
+            "description": "Search the wikipedia for a given query",
+            "trigger_instruction": "\n  *When user is seeking factual information, historical context, detailed explanations of concepts, or biographical details, invoke `search_wikipedia`;",
+            "response_instruction": "The wikipedia search results are listed, I need consider that to address user query.",
+            "parameters": [
+                {
+                    "name": "query",
+                    "type": "string",
+                    "required": true,
+                    "description": "The query to search"
+                }
+            ]
+        }
+    ]
+}
