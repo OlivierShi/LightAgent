@@ -35,7 +35,11 @@ def test_lightOrch_chat():
     response = orch.chat(msg)
     print(response)
 
+def test_sqlite3():
+    from lightagent.storage.sqlite import SQLiteStorage
+    db = SQLiteStorage("test.db")
+    
 
-test_bing_search()
-test_google_search()
+# test_bing_search()
+# test_google_search()
 # test_lightOrch_chat()

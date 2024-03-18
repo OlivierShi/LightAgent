@@ -61,16 +61,9 @@ class Plugin:
         functions = data.get("functions", [])
         return Plugin(name, description, trigger_instruction, [Function.from_json(f) for f in functions])
     
-class Message:
-    def __init__(self, content: str, role: str, last_modified_datetime:datetime, conversation_id: str, enabled_plugins: List[str] = []):
-        self.content = content
-        self.role = role
-        self.last_modified_datetime = last_modified_datetime
-        self.conversation_id = conversation_id
-        self.enabled_plugins = enabled_plugins
-
 class UserProfile:
-    def __init__(self, name, datetime:str = datetime.now().strftime("%Y-%m-%d %H:%M:%S"), location:str = None):
+    def __init__(self, id, name, datetime:str = datetime.now().strftime("%Y-%m-%d %H:%M:%S"), location:str = None):
+        self.id = id
         self.name = name
         self.datetime = datetime
         self.location = location
@@ -83,12 +76,29 @@ class InnerToolInvokationResult:
         self.prompt = prompt
         self.success : bool = success
 
+class Message:
+    def __init__(self, id: str, content: str, role: str, last_modified_datetime:datetime, conversation_id: str, enabled_plugins: List[str] = [], location:str = None, inner_tool_invokation_results: List[InnerToolInvokationResult]=[], response: str=None):
+        self.id = id
+        self.content = content
+        self.last_modified_datetime = last_modified_datetime
+        self.conversation_id = conversation_id
+        self.enabled_plugins = enabled_plugins
+        self.location = location
+        self.inner_tool_invokation_results = inner_tool_invokation_results
+        self.response = response
+
 class Context:
     # conversation history, user profile, inner triggered results
-    def __init__(self, conversation_id, conversation_history: List[Message]=[], user_profile: UserProfile=None, inner_tool_invokation_results: List[InnerToolInvokationResult]=[]):
+    def __init__(self, conversation_id, conversation_history: List[Message]=[], user_profile: UserProfile=None, enabled_plugins:List[str]=[], inner_tool_invokation_results: List[InnerToolInvokationResult]=[]):
         self.conversation_id = conversation_id
         self.conversation_history: List[Message] = conversation_history
         self.user_profile: UserProfile = user_profile
         self.inner_tool_invokation_results: List[InnerToolInvokationResult] = inner_tool_invokation_results
+        self.enabled_plugins = enabled_plugins
 
 
+class Conversation:
+    def __init__(self, id, user_id, message_id_list: List[str]):
+        self.id = id
+        self.user_id = user_id
+        self.message_id_list = message_id_list
