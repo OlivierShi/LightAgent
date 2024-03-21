@@ -18,6 +18,7 @@ Determine which below tool need to be triggered based on the user input query.
 - assistant: `generate_response`
 <|im_end|>
 <|im_start|>context
+## Conversation history
 {conversation_history}
 ## Tool invokations
 {inner_tool_invokation_results}

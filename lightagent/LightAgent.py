@@ -10,7 +10,6 @@ from conversation_manager import ConversationManager
 from config import BaseConfig
 
 ASK_FOR_USER_INPUT = "ASK_FOR_USER_INPUT"
-log = open("prompt.log", "w")
 
 class LightAgent:
     """
@@ -79,8 +78,8 @@ class LightAgent:
 
         print("\n\n== prompt to detect plugin\n")
         print(prompt_detect_plugins)
-        log.write("\n\n== prompt to detect plugin\n")
-        log.write(prompt_detect_plugins)
+        self.log.write("\n\n== prompt to detect plugin\n")
+        self.log.write(prompt_detect_plugins)
         response = self.llm.generate(prompt_detect_plugins)
         print(f"\n\n== response from LLM\n")
         print(response)
@@ -122,8 +121,8 @@ class LightAgent:
 
         print("\n\n== prompt to detect functions\n")
         print(prompt_detect_functions)
-        log.write("\n\n== prompt to detect functions\n")
-        log.write(prompt_detect_functions)
+        self.log.write("\n\n== prompt to detect functions\n")
+        self.log.write(prompt_detect_functions)
         response = self.llm.generate(prompt_detect_functions)
         print(f"\n\n== response from LLM\n")
         print(response)
@@ -148,8 +147,8 @@ class LightAgent:
         prompt_extract_params = self.prompt_generator.format_prompt_function_parameters_extraction(function.name, function.description, parameters_prompts, message.content)
         print(f"\n\n== prompt to extract parameters to the function {function.name}\n")
         print(prompt_extract_params)
-        log.write(f"\n\n== prompt to extract parameters to the function {function.name}\n")
-        log.write(prompt_extract_params)
+        self.log.write(f"\n\n== prompt to extract parameters to the function {function.name}\n")
+        self.log.write(prompt_extract_params)
         response = self.llm.generate(prompt_extract_params)
         print(f"\n\n== response from LLM\n")
         print(response)        
@@ -199,8 +198,8 @@ class LightAgent:
                                                                            success)
         print(f"\n\n== prompt to respond\n")
         print(prompt_responding)
-        log.write(f"\n\n== prompt to respond\n")
-        log.write(prompt_responding)
+        self.log.write(f"\n\n== prompt to respond\n")
+        self.log.write(prompt_responding)
         response = self.llm.generate(prompt_responding)
         print(f"\n\n== response from LLM\n")
         print(response)
@@ -246,8 +245,13 @@ class LightAgent:
         # message -> content, conversation_id, enabled_plugins
         # context -> conversation history, user profile, inner triggered results
         # context is agg data from `users` and `messages` tables, will not be persisted in the database.
+        self.log = open(f"prompt_{message.id}.log", "w")
+        print(f"\n== chat with message\n")
+        print(message)
         context = self.conv_mnger.get_message_context(message)
         self.update_context(context=context, message=message, options=options)
+        print(f"\n== context\n")
+        print(context)
         self.enabled_plugins = self.register_plugins(message.enabled_plugins + context.enabled_plugins)
         
         # tools trigger and invokation step
@@ -297,7 +301,7 @@ class LightAgent:
         response = self.respond(message, context)
 
         self.conv_mnger.save_message(message, context, response)
-
+        self.log.close()
         return response
 
 
@@ -308,5 +312,3 @@ class LightAgent:
 # msg = Message("Retrieve a bottle message", role="user", last_modified_datetime=datetime.now(), conversation_id="123", enabled_plugins=["web_search", "message_in_a_bottle"])
 # response = orch.chat(msg)
 # print(response)
-
-log.close()

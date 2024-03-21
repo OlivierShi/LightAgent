@@ -53,6 +53,9 @@ class Plugin:
         self.trigger_instruction = trigger_instruction
         self.functions = functions
 
+    def __str__(self) -> str:
+        return f"Plugin: {self.name}, {self.description}, {self.trigger_instruction}, {self.functions}"
+
     @staticmethod
     def from_json(data):
         name = data.get("name", "")
@@ -67,6 +70,9 @@ class UserProfile:
         self.name = name
         self.datetime = datetime
         self.location = location
+    
+    def __str__(self) -> str:
+        return f"UserProfile: {self.id}, {self.name}, {self.datetime}, {self.location}"
 
 class InnerToolInvokationResult:
     def __init__(self, plugin_name:str, function_name:str, success:bool, data: str, prompt:str):
@@ -76,8 +82,20 @@ class InnerToolInvokationResult:
         self.prompt = prompt
         self.success : bool = success
 
+    def __str__(self) -> str:
+        return f"InnerToolInvokationResult: {self.plugin_name}, {self.function_name}, {self.success}, {self.data}, {self.prompt}"
+    
+    def to_json(self) -> dict:
+        return {
+            "plugin_name": self.plugin_name,
+            "function_name": self.function_name,
+            "data": self.data,
+            "prompt": self.prompt,
+            "success": self.success
+        }
+
 class Message:
-    def __init__(self, id: str, content: str, role: str, last_modified_datetime:datetime, conversation_id: str, enabled_plugins: List[str] = [], location:str = None, inner_tool_invokation_results: List[InnerToolInvokationResult]=[], response: str=None):
+    def __init__(self, id: str, content: str, last_modified_datetime:datetime, conversation_id: str, enabled_plugins: List[str] = [], location:str = None, inner_tool_invokation_results: List[InnerToolInvokationResult]=[], response: str=None):
         self.id = id
         self.content = content
         self.last_modified_datetime = last_modified_datetime
@@ -86,6 +104,9 @@ class Message:
         self.location = location
         self.inner_tool_invokation_results = inner_tool_invokation_results
         self.response = response
+
+    def __str__(self) -> str:
+        return f"Message: {self.id}, {self.content}, {self.last_modified_datetime}, {self.conversation_id}, {self.enabled_plugins}, {self.location}, {self.inner_tool_invokation_results}, {self.response}"
 
 class Context:
     # conversation history, user profile, inner triggered results
@@ -96,9 +117,15 @@ class Context:
         self.inner_tool_invokation_results: List[InnerToolInvokationResult] = inner_tool_invokation_results
         self.enabled_plugins = enabled_plugins
 
+    def __str__(self) -> str:
+        return f"Context: {self.conversation_id}, {[str(msg) for msg in self.conversation_history]}, {self.user_profile}, {self.inner_tool_invokation_results}, {self.enabled_plugins}"
+
 
 class Conversation:
     def __init__(self, id, user_id, message_id_list: List[str]):
         self.id = id
         self.user_id = user_id
         self.message_id_list = message_id_list
+
+    def __str__(self) -> str:
+        return f"Conversation: {self.id}, {self.user_id}, {self.message_id_list}"

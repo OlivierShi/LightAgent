@@ -21,8 +21,14 @@ class SQLiteStorage:
     def __del__(self):
         self.conn.close()
 
-    def execute(self, query):
-        self.cursor.execute(query)
+    def close(self):
+        self.conn.close()
+
+    def execute(self, query, values=None):
+        if values:
+            self.cursor.execute(query, values)
+        else:
+            self.cursor.execute(query)
         self.conn.commit()
 
     def fetchall(self, query):
@@ -38,6 +44,12 @@ class SQLiteStorage:
         placeholders = ', '.join('?' * len(data))
         values = tuple(data.values())
         self.execute(f'INSERT INTO {table} ({columns}) VALUES ({placeholders})', values)
+
+    def upsert(self, table, data):
+        columns = ', '.join(data.keys())
+        placeholders = ', '.join('?' * len(data))
+        values = tuple(data.values())
+        self.execute(f'INSERT OR REPLACE INTO {table} ({columns}) VALUES ({placeholders})', values)
 
     def update(self, table, data, condition):
         set_clause = ', '.join([f'{column} = ?' for column in data.keys()])
