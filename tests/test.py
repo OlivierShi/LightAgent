@@ -35,7 +35,70 @@ def test_lightOrch_chat():
     response = orch.chat(msg)
     print(response)
 
+def test_sqlite3():
+    from lightagent.storage.sqlite import SQLiteStorage
+    db = SQLiteStorage("test.db")
 
-test_bing_search()
-test_google_search()
+    db.create_table("users", "id TEXT PRIMARY KEY, name TEXT, conversation_id_list TEXT")
+    db.create_table("conversations", "id TEXT PRIMARY KEY, user_id TEXT, message_id_list TEXT")
+    db.create_table("messages", "id TEXT PRIMARY KEY, content TEXT, last_modified_datetime TEXT, location TEXT, conversation_id TEXT, enabled_plugins TEXT, inner_tool_invokation_results TEXT, response TEXT")
+    
+def test_conv_manager_save_message():
+    from lightagent.conversation_manager import ConversationManager
+    from lightagent.storage.sqlite import SQLiteStorage
+    from lightagent.models import Message, Context, UserProfile
+    from datetime import datetime
+    db = SQLiteStorage("test-sqlite.db")
+    cm = ConversationManager(db)
+
+    message = Message("123", "Hello, World!", datetime.now(), "abcd", ["web_search", "message_in_a_bottle"])
+    
+    context = Context("abcd", [], UserProfile("1", "Mike"), [], [])
+    
+    cm.save_message(message, context)
+
+    cm.close_storage()
+
+def test_conv_manager_get_message():
+    from lightagent.conversation_manager import ConversationManager
+    from lightagent.storage.sqlite import SQLiteStorage
+    from lightagent.models import Message, Context, UserProfile
+    from datetime import datetime
+    db = SQLiteStorage("test-sqlite.db")
+    cm = ConversationManager(db)
+
+    message = Message("123", "Hello, World!", datetime.now(), "abcd", ["web_search", "message_in_a_bottle"])
+    
+    context = cm.get_message_context(message)
+
+    print(context)
+    cm.close_storage()
+
+def test_LightAgent_multiturn():
+    from datetime import datetime
+    from lightagent.prompt_generator import PromptGenerator
+    from lightagent.conversation_manager import ConversationManager
+    from lightagent.storage.sqlite import SQLiteStorage    
+    from lightagent.models import Message
+    from lightagent.llms import GPT35
+    from lightagent.plugins import PluginRunner
+    from lightagent.LightAgent import LightAgent
+    db = SQLiteStorage("test-sqlite.db")
+    cm = ConversationManager(db)
+    orch = LightAgent(PromptGenerator(), GPT35("gpt3.5"), cm, PluginRunner())
+
+    message = Message("123", "Who are you?", datetime.now(), "abcd",  ["web_search", "message_in_a_bottle"])
+    response = orch.chat(message)
+    print(response)
+
+    message = Message("234", "What's the weather in New York City?", datetime.now(), "abcd",  ["web_search", "message_in_a_bottle"])
+    
+    response = orch.chat(message)
+    print(response)    
+
+# test_bing_search()
+# test_google_search()
 # test_lightOrch_chat()
+# test_conv_manager_save_message()
+# test_conv_manager_get_message()
+test_LightAgent_multiturn()

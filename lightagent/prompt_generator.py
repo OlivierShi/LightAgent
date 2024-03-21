@@ -2,6 +2,7 @@ from typing import List
 from models import UserProfile, Message, InnerToolInvokationResult
 from config import BaseConfig
 import os
+from datetime import datetime
 
 class PromptGenerator:
     def __init__(self,):
@@ -50,17 +51,23 @@ class PromptGenerator:
                 .replace("{query}", query)
        
     def format_prompt_responding_user_profile(self, user_profile: UserProfile = None):
-        if user_profile is None:
-            return None
-        
         prompt_user_profile = ""
-        if user_profile.name is not None:
-            prompt_user_profile += f"- User name is: {user_profile.name}.\n"
-        if user_profile.datetime is not None:
-            prompt_user_profile += f"- Current time is: {user_profile.datetime}.\n"
-        if user_profile.location is not None:
-            prompt_user_profile += f"- Location is: {user_profile.location}.\n"
-        return prompt_user_profile
+
+        if user_profile is None:
+            prompt_user_profile += f"- Current time is: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.\n"
+        else:
+            if user_profile.name is not None:
+                prompt_user_profile += f"- User name is: {user_profile.name}.\n"
+
+            if user_profile.datetime is not None:
+                prompt_user_profile += f"- Current time is: {user_profile.datetime}.\n"
+            else:
+                prompt_user_profile += f"- Current time is: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.\n"
+
+            if user_profile.location is not None:
+                prompt_user_profile += f"- Location is: {user_profile.location}.\n"
+                
+        return prompt_user_profile.strip()
 
     def format_conversation_history(self, conversation_history: List[Message] = []):
         if not conversation_history or len(conversation_history) == 0:
@@ -69,8 +76,10 @@ class PromptGenerator:
         prompt_conversation_history = ""
         ordered_messages = sorted(conversation_history, key=lambda x: x.last_modified_datetime)
         for msg in ordered_messages:
-            prompt_conversation_history += f"- {msg.role}: {msg.content}\n"
-        return prompt_conversation_history
+            prompt_conversation_history += f"- user: {msg.content}\n"
+            if msg.response is not None:
+                prompt_conversation_history += f"- assistant: {msg.response}\n"
+        return prompt_conversation_history.strip()
 
     def format_inner_tool_invokation_results(self, inner_tool_invokation_results: List[InnerToolInvokationResult] = []):
         if not inner_tool_invokation_results or len(inner_tool_invokation_results) == 0:
@@ -81,7 +90,7 @@ class PromptGenerator:
             prompt_inner_tool_invokation_results += f"- {result.plugin_name}::{result.function_name}: {result.data}\n"
             if result.prompt is not None:
                 prompt_inner_tool_invokation_results += f"    * Prompt: {result.prompt}\n"
-        return prompt_inner_tool_invokation_results
+        return prompt_inner_tool_invokation_results.strip()
 
     def format_prompt_responding(self,
                                  user_profile:str, 

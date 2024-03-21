@@ -6,19 +6,20 @@ from models import Plugin, Message, Function, Parameter, Context, UserProfile, I
 from llms import BaseLLM
 from plugins import PluginRunner
 from postprocessor import Postprocessor
+from conversation_manager import ConversationManager
 from config import BaseConfig
 
 ASK_FOR_USER_INPUT = "ASK_FOR_USER_INPUT"
-log = open("prompt.log", "w")
 
 class LightAgent:
     """
     Since the mini-LLM is a light-weight version of the LLM, the agent to drive LLM need to be specific for light-weight. It means the task to handle the query need to be decomposed into minimized tasks. 
     """
-    def __init__(self, prompt_generator: PromptGenerator, llm: BaseLLM, plugin_runner: PluginRunner = None):
+    def __init__(self, prompt_generator: PromptGenerator, llm: BaseLLM, conv_mnger: ConversationManager, plugin_runner: PluginRunner = None):
         self.max_tool_invokation_times = 2
         self.prompt_generator = prompt_generator
         self.llm = llm
+        self.conv_mnger = conv_mnger
         self.default_plugins_names = ["generate_response", "withdraw"]
         self.default_plugins = self.register_plugins(self.default_plugins_names) # default plugins
         self.enabled_plugins = [] # enabled plugins by the query
@@ -32,7 +33,7 @@ class LightAgent:
 
     def register_plugins(self, plugin_names: list):
         # todo: load the plugins based on plugin name.
-        return [self.parse_plugin(plugin_name) for plugin_name in plugin_names]
+        return [self.parse_plugin(plugin_name) for plugin_name in set(plugin_names)]
     
     def detach_plugins(self, plugins: List[Plugin], detached_plugins: List[Plugin]) -> List[Plugin]:
         left_plugins = []
@@ -77,8 +78,8 @@ class LightAgent:
 
         print("\n\n== prompt to detect plugin\n")
         print(prompt_detect_plugins)
-        log.write("\n\n== prompt to detect plugin\n")
-        log.write(prompt_detect_plugins)
+        self.log.write("\n\n== prompt to detect plugin\n")
+        self.log.write(prompt_detect_plugins)
         response = self.llm.generate(prompt_detect_plugins)
         print(f"\n\n== response from LLM\n")
         print(response)
@@ -120,8 +121,8 @@ class LightAgent:
 
         print("\n\n== prompt to detect functions\n")
         print(prompt_detect_functions)
-        log.write("\n\n== prompt to detect functions\n")
-        log.write(prompt_detect_functions)
+        self.log.write("\n\n== prompt to detect functions\n")
+        self.log.write(prompt_detect_functions)
         response = self.llm.generate(prompt_detect_functions)
         print(f"\n\n== response from LLM\n")
         print(response)
@@ -146,8 +147,8 @@ class LightAgent:
         prompt_extract_params = self.prompt_generator.format_prompt_function_parameters_extraction(function.name, function.description, parameters_prompts, message.content)
         print(f"\n\n== prompt to extract parameters to the function {function.name}\n")
         print(prompt_extract_params)
-        log.write(f"\n\n== prompt to extract parameters to the function {function.name}\n")
-        log.write(prompt_extract_params)
+        self.log.write(f"\n\n== prompt to extract parameters to the function {function.name}\n")
+        self.log.write(prompt_extract_params)
         response = self.llm.generate(prompt_extract_params)
         print(f"\n\n== response from LLM\n")
         print(response)        
@@ -197,8 +198,8 @@ class LightAgent:
                                                                            success)
         print(f"\n\n== prompt to respond\n")
         print(prompt_responding)
-        log.write(f"\n\n== prompt to respond\n")
-        log.write(prompt_responding)
+        self.log.write(f"\n\n== prompt to respond\n")
+        self.log.write(prompt_responding)
         response = self.llm.generate(prompt_responding)
         print(f"\n\n== response from LLM\n")
         print(response)
@@ -219,12 +220,7 @@ class LightAgent:
         # todo: implement the function interface;
         return self.plugin_runner.run(plugin.name, function.name, parameters)
 
-    def get_conversation_context(self, conversation_id) -> Context:
-        # given conversation_id, return the context of the conversation
-        # todo: implement the context management
-        return Context(conversation_id, conversation_history=[], user_profile=UserProfile("Olivier"), inner_tool_invokation_results=[])
-
-    def update_context(self, context: Context = None, message: Message = None, user_profile: UserProfile=None, inner_tool_invokation_results: List[InnerToolInvokationResult] = []):
+    def update_context(self, context: Context = None, message: Message = None, user_profile: UserProfile=None, inner_tool_invokation_results: List[InnerToolInvokationResult] = [], options: dict = {}):
         # given trigger_results and context, update the context
 
         if message:
@@ -233,13 +229,30 @@ class LightAgent:
             context.user_profile = user_profile
         if inner_tool_invokation_results:
             context.inner_tool_invokation_results = inner_tool_invokation_results
+        if options:
+            self.apply_options(context, options)
 
-    def chat(self, message: Message):
+    def apply_options(self, context: Context, options: dict):
+        # apply options to the agent
+        if "user_name" in options:
+            context.user_profile.name = options["user_name"]
+        if "user_location" in options:
+            context.user_profile.location = options["user_location"]
+        if "enabled_plugins" in options:
+            context.enabled_plugins = options["enabled_plugins"]
+
+    def chat(self, message: Message, options: dict = {}):
         # message -> content, conversation_id, enabled_plugins
         # context -> conversation history, user profile, inner triggered results
-        context = self.get_conversation_context(message.conversation_id)
-        self.update_context(context=context, message=message)
-        self.enabled_plugins = self.register_plugins(message.enabled_plugins)
+        # context is agg data from `users` and `messages` tables, will not be persisted in the database.
+        self.log = open(f"prompt_{message.id}.log", "w")
+        print(f"\n== chat with message\n")
+        print(message)
+        context = self.conv_mnger.get_message_context(message)
+        self.update_context(context=context, message=message, options=options)
+        print(f"\n== context\n")
+        print(context)
+        self.enabled_plugins = self.register_plugins(message.enabled_plugins + context.enabled_plugins)
         
         # tools trigger and invokation step
         _tool_invokation_num = 0
@@ -287,6 +300,8 @@ class LightAgent:
         # response step
         response = self.respond(message, context)
 
+        self.conv_mnger.save_message(message, context, response)
+        self.log.close()
         return response
 
 
@@ -297,5 +312,3 @@ class LightAgent:
 # msg = Message("Retrieve a bottle message", role="user", last_modified_datetime=datetime.now(), conversation_id="123", enabled_plugins=["web_search", "message_in_a_bottle"])
 # response = orch.chat(msg)
 # print(response)
-
-log.close()
