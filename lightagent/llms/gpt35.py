@@ -11,7 +11,8 @@ class GPT35(BaseLLM):
             api_version=BaseConfig.openai_api_version
             )
 
-    def generate(self, input):
+    def generate(self, input, reasoning=True):
+        stops = ["<|im_end|>", "<|im_start|>", "###", "\n\n"] if reasoning else ["<|im_end|>", "<|im_start|>", "###"]
         messages = [{"role":"system","content":input}]
         completion = self.client.chat.completions.create(
             model=BaseConfig.openai_api_model,
@@ -21,6 +22,6 @@ class GPT35(BaseLLM):
             top_p=0.95,
             frequency_penalty=0,
             presence_penalty=0,
-            stop=["<|im_end|>", "<|im_start|>", "###"]
+            stop=stops
         )
         return completion.choices[0].message.content

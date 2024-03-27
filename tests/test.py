@@ -112,6 +112,12 @@ def test_LightAgent_multiturn():
     response = orch.chat(message)
     print(response)    
 
+
+def test_minicpm2b():
+    from lightagent.llms.minicpm2b import MiniCPM2B
+    m = MiniCPM2B()
+
+
 # test_bing_search()
 # test_google_search()
 # test_lightAgent_chat()
@@ -119,3 +125,4 @@ def test_LightAgent_multiturn():
 # test_conv_manager_get_message()
 test_LightAgent_multiturn()
 # test_wiki_search()
+# test_minicpm2b()
