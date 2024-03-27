@@ -25,7 +25,7 @@ def test_wiki_search():
     ws = WebSearch()
     print(ws.search_wiki("Yao Ming's Wife"))
 
-def test_lightOrch_chat():
+def test_lightAgent_chat():
     from datetime import datetime
     from lightagent.prompt_generator import PromptGenerator
     from lightagent.models import Message
@@ -114,7 +114,7 @@ def test_LightAgent_multiturn():
 
 # test_bing_search()
 # test_google_search()
-# test_lightOrch_chat()
+# test_lightAgent_chat()
 # test_conv_manager_save_message()
 # test_conv_manager_get_message()
 test_LightAgent_multiturn()
