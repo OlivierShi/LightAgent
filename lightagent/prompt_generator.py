@@ -76,9 +76,9 @@ class PromptGenerator:
         prompt_conversation_history = ""
         ordered_messages = sorted(conversation_history, key=lambda x: x.last_modified_datetime)
         for msg in ordered_messages:
-            prompt_conversation_history += f"- user: {msg.content}\n"
+            prompt_conversation_history += f"user: {msg.content}\n"
             if msg.response is not None:
-                prompt_conversation_history += f"- assistant: {msg.response}\n"
+                prompt_conversation_history += f"assistant: {msg.response}\n"
         return prompt_conversation_history.strip()
 
     def format_inner_tool_invokation_results(self, inner_tool_invokation_results: List[InnerToolInvokationResult] = []):

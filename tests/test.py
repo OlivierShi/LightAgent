@@ -14,12 +14,16 @@ def test_plugin_runner():
 
 def test_google_search():
     from lightagent.plugins.impl.web_search import google_search
-    print(google_search("Today's weather in New York City"))
+    print(google_search("Yao Ming Wife"))
 
 def test_bing_search():
     from lightagent.plugins.impl.web_search import bing_search
     print(bing_search("Today's weather in New York City"))
 
+def test_wiki_search():
+    from lightagent.plugins.impl.web_search import WebSearch
+    ws = WebSearch()
+    print(ws.search_wiki("Yao Ming's Wife"))
 
 def test_lightOrch_chat():
     from datetime import datetime
@@ -83,6 +87,8 @@ def test_LightAgent_multiturn():
     from lightagent.llms import GPT35
     from lightagent.plugins import PluginRunner
     from lightagent.LightAgent import LightAgent
+    if os.path.exists("test-sqlite.db"):
+        os.remove("test-sqlite.db")
     db = SQLiteStorage("test-sqlite.db")
     cm = ConversationManager(db)
     orch = LightAgent(PromptGenerator(), GPT35("gpt3.5"), cm, PluginRunner())
@@ -96,9 +102,20 @@ def test_LightAgent_multiturn():
     response = orch.chat(message)
     print(response)    
 
+    message = Message("345", "What time is it?", datetime.now(), "abcd",  ["web_search", "message_in_a_bottle"])
+    
+    response = orch.chat(message)
+    print(response)    
+
+    message = Message("456", "Do you know who is the wife of Yao Min?", datetime.now(), "abcd",  ["web_search", "message_in_a_bottle"])
+    
+    response = orch.chat(message)
+    print(response)    
+
 # test_bing_search()
 # test_google_search()
 # test_lightOrch_chat()
 # test_conv_manager_save_message()
 # test_conv_manager_get_message()
 test_LightAgent_multiturn()
+# test_wiki_search()

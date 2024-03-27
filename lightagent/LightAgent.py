@@ -76,17 +76,17 @@ class LightAgent:
         
         prompt_detect_plugins = self.prompt_generator.format_prompt_tools_detection(plugins_description, plugins_trigger, prompt_conversation_history, prompt_inner_tool_invokation_results, query)
 
-        print("\n\n== prompt to detect plugin\n")
-        print(prompt_detect_plugins)
+        self.log.write("\n\n== prompt to detect plugin\n")
+        self.log.write(prompt_detect_plugins)
         self.log.write("\n\n== prompt to detect plugin\n")
         self.log.write(prompt_detect_plugins)
         response = self.llm.generate(prompt_detect_plugins)
-        print(f"\n\n== response from LLM\n")
-        print(response)
+        self.log.write(f"\n\n== response from LLM\n")
+        self.log.write(response)
         processed_plugin_name = Postprocessor.postprocess_llm(response)
         for plugin in self.enabled_plugins + self.default_plugins:
             if processed_plugin_name == plugin.name:
-                print(f"== detected plugin: {plugin.name}\n")
+                self.log.write(f"== detected plugin: {plugin.name}\n")
                 return plugin
         return None
 
@@ -119,17 +119,17 @@ class LightAgent:
         trigger_instruction = trigger_instruction.strip("\n")
         prompt_detect_functions = self.prompt_generator.format_prompt_function_detection(description, trigger_instruction, message.content)
 
-        print("\n\n== prompt to detect functions\n")
-        print(prompt_detect_functions)
+        self.log.write("\n\n== prompt to detect functions\n")
+        self.log.write(prompt_detect_functions)
         self.log.write("\n\n== prompt to detect functions\n")
         self.log.write(prompt_detect_functions)
         response = self.llm.generate(prompt_detect_functions)
-        print(f"\n\n== response from LLM\n")
-        print(response)
+        self.log.write(f"\n\n== response from LLM\n")
+        self.log.write(response)
         processed_function_name = Postprocessor.postprocess_llm(response)
         for func in functions:
             if processed_function_name == func.name:
-                print(f"== detected function: {func.name}\n")
+                self.log.write(f"== detected function: {func.name}\n")
                 return func
         return None
     
@@ -145,20 +145,20 @@ class LightAgent:
             parameters_prompts += "\n"
         
         prompt_extract_params = self.prompt_generator.format_prompt_function_parameters_extraction(function.name, function.description, parameters_prompts, message.content)
-        print(f"\n\n== prompt to extract parameters to the function {function.name}\n")
-        print(prompt_extract_params)
+        self.log.write(f"\n\n== prompt to extract parameters to the function {function.name}\n")
+        self.log.write(prompt_extract_params)
         self.log.write(f"\n\n== prompt to extract parameters to the function {function.name}\n")
         self.log.write(prompt_extract_params)
         response = self.llm.generate(prompt_extract_params)
-        print(f"\n\n== response from LLM\n")
-        print(response)        
+        self.log.write(f"\n\n== response from LLM\n")
+        self.log.write(response)        
         processed_params = json.loads(Postprocessor.postprocess_llm(response))
         
         for k, v in processed_params.items():
             for param in parameters:
                 if k == param.name and v is not None:
                     param.value = {k: v}
-                    print(f"== extracted parameter: {k} -> {v}\n")
+                    self.log.write(f"== extracted parameter: {k} -> {v}\n")
         return parameters
 
     def check_params_to_function(self, parameters: List[Parameter]) -> Tuple[dict, dict]:
@@ -196,13 +196,13 @@ class LightAgent:
                                                                            prompt_inner_tool_invokation_results,
                                                                            query,
                                                                            success)
-        print(f"\n\n== prompt to respond\n")
-        print(prompt_responding)
+        self.log.write(f"\n\n== prompt to respond\n")
+        self.log.write(prompt_responding)
         self.log.write(f"\n\n== prompt to respond\n")
         self.log.write(prompt_responding)
         response = self.llm.generate(prompt_responding)
-        print(f"\n\n== response from LLM\n")
-        print(response)
+        self.log.write(f"\n\n== response from LLM\n")
+        self.log.write(response)
         response = Postprocessor.postprocess_llm(response)
         # todo: parse the response
         return response
@@ -246,12 +246,10 @@ class LightAgent:
         # context -> conversation history, user profile, inner triggered results
         # context is agg data from `users` and `messages` tables, will not be persisted in the database.
         self.log = open(f"prompt_{message.id}.log", "w")
-        print(f"\n== chat with message\n")
-        print(message)
+        self.log.write(f"\n== chat with message\n")
         context = self.conv_mnger.get_message_context(message)
         self.update_context(context=context, message=message, options=options)
-        print(f"\n== context\n")
-        print(context)
+        self.log.write(f"\n== context\n")
         self.enabled_plugins = self.register_plugins(message.enabled_plugins + context.enabled_plugins)
         
         # tools trigger and invokation step
@@ -289,8 +287,8 @@ class LightAgent:
             cur_tool_invokation_result = InnerToolInvokationResult(plugin.name, function.name, success=success, data=result, prompt=None)
             self.update_context(context=context,
                                 inner_tool_invokation_results=context.inner_tool_invokation_results + [cur_tool_invokation_result])
-            print(f"== trigger results\n")
-            print(cur_tool_invokation_result.data)
+            self.log.write(f"== trigger results\n")
+            self.log.write(cur_tool_invokation_result.data)
             if success:
                 # detach the successfully triggered plugin
                 detached_plugins.append(plugin)

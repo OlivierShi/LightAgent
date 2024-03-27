@@ -21,6 +21,6 @@ class GPT35(BaseLLM):
             top_p=0.95,
             frequency_penalty=0,
             presence_penalty=0,
-            stop=["<|im_end|>", "<|im_start|>"]
+            stop=["<|im_end|>", "<|im_start|>", "###"]
         )
         return completion.choices[0].message.content

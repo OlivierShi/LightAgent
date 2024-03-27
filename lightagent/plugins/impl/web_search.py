@@ -36,11 +36,14 @@ class WebSearch():
         return "\n".join(search_results)
 
     @lru_cache(maxsize=None)
-    def search_wikipedia(self, query: str) -> str:
+    def search_wiki(self, query: str) -> str:
         try:
             wiki = wikipedia.summary(query, sentences=10)
         except wikipedia.exceptions.DisambiguationError as e:
-            wiki = wikipedia.summary(e.options[0], sentences=10)
-        return wiki
+            wiki = wikipedia.summary(e.options[0], sentences=5)
+        except wikipedia.exceptions.PageError as e:
+            wiki = "No result found from wikipedia."
+        news = self.search_news(query)
+        return wiki + "\n" + news[int(len(news)/2):]
     
 
