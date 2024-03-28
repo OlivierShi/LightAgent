@@ -245,7 +245,7 @@ class LightAgent:
         # message -> content, conversation_id, enabled_plugins
         # context -> conversation history, user profile, inner triggered results
         # context is agg data from `users` and `messages` tables, will not be persisted in the database.
-        self.log = open(f"prompt_{message.id}.log", "w")
+        self.log = open(f"prompt_{message.id}.log", "w", encoding="utf-8")
         self.log.write(f"\n== chat with message\n")
         context = self.conv_mnger.get_message_context(message)
         self.update_context(context=context, message=message, options=options)
