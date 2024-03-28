@@ -12,18 +12,15 @@ def test_plugin_runner():
 
     print(p.run("web_search", "search_news", {"query": "Today's news on Sport"}))
 
-def test_google_search():
-    from lightagent.plugins.impl.web_search import google_search
-    print(google_search("Yao Ming Wife"))
-
-def test_bing_search():
-    from lightagent.plugins.impl.web_search import bing_search
-    print(bing_search("Today's weather in New York City"))
-
-def test_wiki_search():
+def test_search_news():
     from lightagent.plugins.impl.web_search import WebSearch
     ws = WebSearch()
-    print(ws.search_wiki("Yao Ming's Wife"))
+    print(ws.search_news("今天seattle天气"))
+
+def test_search_wiki():
+    from lightagent.plugins.impl.web_search import WebSearch
+    ws = WebSearch()
+    print(ws.search_wiki("姚明老婆"))
 
 def test_lightAgent_chat():
     from datetime import datetime
@@ -123,6 +120,8 @@ def test_minicpm2b():
 # test_lightAgent_chat()
 # test_conv_manager_save_message()
 # test_conv_manager_get_message()
-test_LightAgent_multiturn()
+# test_LightAgent_multiturn()
 # test_wiki_search()
 # test_minicpm2b()
+# test_search_news()
+# test_search_wiki()
