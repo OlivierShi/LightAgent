@@ -8,7 +8,7 @@ from models import Message
 from llms import GPT35
 from plugins import PluginRunner
 from LightAgent import LightAgent
-if os.path.exists("test-sqlite.db"):
+if os.path.exists("run-sqlite.db"):
     os.remove("run-sqlite.db")
 db = SQLiteStorage("run-sqlite.db")
 cm = ConversationManager(db)
@@ -29,7 +29,7 @@ while True:
     
     if query == "exit":
         break
-    
+
     message = Message(msg_id, query, datetime.now(), conv_id,  ["web_search", "message_in_a_bottle"])
     
     response = agent.chat(message)
