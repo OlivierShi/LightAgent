@@ -16,15 +16,12 @@ def google_search(query: str) -> str:
         "Sec-Ch-Ua-Platform-Version": "14.0.0"
     }
     url = f"https://www.google.com/search?q={urllib.parse.quote_plus(query)}"
-    print(url)
     res = requests.get(url, headers=headers)
-    print(res.status_code)
     if res.status_code != 200:
         raise Exception(f"Failed to get search results from google. Status code: {res.status_code}")
     html_content = res.content
     soup = BeautifulSoup(html_content, 'html.parser')
     text = soup.get_text(separator=' ', strip=True)
-    print(text)
     return text[200:2200]
 
 def bing_search(query: str) -> str:
@@ -34,15 +31,12 @@ def bing_search(query: str) -> str:
         "Accept-Language": "en"
     }
     url = f"https://www.bing.com/search?q={urllib.parse.quote_plus(query)}&cc=-1"
-    print(url)
     res = requests.get(url, headers=headers)
-    print(res.status_code)
     if res.status_code != 200:
         raise Exception(f"Failed to get search results from bing. Status code: {res.status_code}")
     html_content = res.content
     soup = BeautifulSoup(html_content, 'html.parser')
     text = soup.get_text(separator=' ', strip=True)
-    print(text)
     return text[500:1500]
 
 def wiki_search(query: str) -> str:

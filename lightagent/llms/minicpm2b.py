@@ -22,8 +22,8 @@ class MiniCPM2B(BaseLLM):
         path = 'openbmb/MiniCPM-2B-dpo-fp16'
         self.tokenizer = AutoTokenizer.from_pretrained(path, cache_dir=os.path.join(BaseConfig.BASE_DIR, "res/models/"))
         self.model = AutoModelForCausalLM.from_pretrained(path, torch_dtype=torch.float16, device_map='cuda', trust_remote_code=True, cache_dir=os.path.join(BaseConfig.BASE_DIR, "res/models/"))
-        self.stopping_criteria_list_general = [EosListStoppingCriteria(self.tokenizer.encode(f" {stop} ", add_special_tokens=False))[1:-1] for stop in general_stops]
-        self.stopping_criteria_list_strict = [EosListStoppingCriteria(self.tokenizer.encode(f" {stop} ", add_special_tokens=False))[1:-1] for stop in strict_stops]
+        self.stopping_criteria_list_general = [EosListStoppingCriteria(self.tokenizer.encode(f" {stop} ", add_special_tokens=False)[1:-1]) for stop in general_stops]
+        self.stopping_criteria_list_strict = [EosListStoppingCriteria(self.tokenizer.encode(f" {stop} ", add_special_tokens=False)[1:-1]) for stop in strict_stops]
 
     def llm(self, query, temperature=0.1, top_p=0.8, stopping_criteria=None):
         if stopping_criteria is None:
@@ -37,7 +37,6 @@ class MiniCPM2B(BaseLLM):
             pad_token_id=self.tokenizer.eos_token_id,
             stopping_criteria=stopping_criteria)
         torch.cuda.empty_cache()
-        print(responds)
         return responds
 
     def generate(self, input, reasoning=True):

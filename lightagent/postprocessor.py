@@ -1,6 +1,25 @@
+import json 
 
 class Postprocessor:
 
+    @staticmethod
+    def try_parse_json_from_llm(response: str):
+        """
+        Try to parse the response as JSON.
+        :param response: The response to parse.
+        :return: The parsed JSON object or None if parsing fails.
+        """
+        response = Postprocessor.postprocess_llm(response)
+
+        try:
+            js_str = json.loads(response)
+            if "tool" in js_str:
+                return js_str["tool"]
+            else:
+                return None
+        except json.JSONDecodeError:
+            return None
+        
     @staticmethod
     def postprocess_llm(response: str):
         """

@@ -15,7 +15,7 @@ user: today's weather
 - web_search::search_news: Weather 62°F Thursday Clear with periodic clouds High: 71°F Low: 38°F More on weather.com People also ask What is the coldest month in Beijing? What is the best time to visit Beijing? Is it cold or hot in Beijing?
 ## Predicting Tool Invocation Response
 user: today's weather
-assistant: `generate_response`### Thoughts: The search results are listed in the Completed Inner Tool Invocation Results, so i must invoke `generate_response` to provide answer.
+assistant: {"tool":"generate_response"}### Thoughts: The search results are listed in the Completed Inner Tool Invocation Results, so i must invoke `generate_response` to provide answer.
 <|im_end|>
 <|im_start|>
 ## Conversation History

@@ -30,7 +30,13 @@ class PromptGenerator:
         if self._is_none_or_whitespace(inner_tool_invokation_results):
             inner_tool_invokation_results = ""
         
-        return self.prompt_tools_detection.format(description=description, trigger_instruction=trigger_instruction, examples=examples, conversation_history=conversation_history, inner_tool_invokation_results=inner_tool_invokation_results, query=query)
+        return self.prompt_tools_detection                                                 \
+                .replace("{description}", description)                                     \
+                .replace("{trigger_instruction}", trigger_instruction)                     \
+                .replace("{examples}", examples)                                           \
+                .replace("{conversation_history}", conversation_history)                   \
+                .replace("{inner_tool_invokation_results}", inner_tool_invokation_results) \
+                .replace("{query}", query)
     
     def format_prompt_function_detection(self, description: str, trigger_instruction: str, query: str, examples: str = None):
         if self._is_none_or_whitespace(examples):

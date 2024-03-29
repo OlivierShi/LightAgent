@@ -83,7 +83,7 @@ class LightAgent:
         response = self.llm.generate(prompt_detect_plugins, reasoning=True)
         self.log.write(f"\n\n== response from LLM\n")
         self.log.write(response)
-        processed_plugin_name = Postprocessor.postprocess_llm(response)
+        processed_plugin_name = Postprocessor.try_parse_json_from_llm(response)
         for plugin in self.enabled_plugins + self.default_plugins:
             if processed_plugin_name == plugin.name:
                 self.log.write(f"== detected plugin: {plugin.name}\n")
@@ -241,6 +241,31 @@ class LightAgent:
         if "enabled_plugins" in options:
             context.enabled_plugins = options["enabled_plugins"]
 
+    def handle_plugin_results(self, context: Context, plugin_name: str, function_name: str, success: bool, data: str, prompt: str=None):
+        cur_tool_invokation_result = InnerToolInvokationResult(plugin_name, function_name, success=success, data=data, prompt=None)
+        self.update_context(context=context, inner_tool_invokation_results=context.inner_tool_invokation_results + [cur_tool_invokation_result])
+
+    def check_detected_plugin_results(self, context: Context, plugin: Plugin) -> bool:
+        if not plugin:
+            self.handle_plugin_results(context, "", "", False, "No plugin detected.", None)
+            return False
+        
+        if plugin.name == "withdraw":
+            self.handle_plugin_results(context, plugin.name, "", True, "I need withdraw the query.", None)
+            return False
+        
+        if plugin.name == "generate_response":
+            self.handle_plugin_results(context, plugin.name, "", True, "I need to generate the response to the user query.", None)
+            return False
+        
+        return True
+
+    def check_detected_function_results(self, context: Context, plugin: Plugin, function: Function) -> bool:
+        if not function:
+            self.handle_plugin_results(context, plugin.name, "", False, f"The plugin {plugin.name} was failed.", None)
+            return False
+        return True
+    
     def chat(self, message: Message, options: dict = {}):
         # message -> content, conversation_id, enabled_plugins
         # context -> conversation history, user profile, inner triggered results
@@ -261,15 +286,16 @@ class LightAgent:
 
             _tool_invokation_num += 1
 
-            if not plugin or plugin.name in self.default_plugins_names:
+            if not self.check_detected_plugin_results(context, plugin):
                 break
             
             function = self.detect_function(plugin, message, context)
         
-            if not function:
+            if not self.check_detected_function_results(context, plugin, function):
                 break
 
             params = self.extract_params_to_function(function, message, context)
+
             parameters_to_execute, missing_required_parameters_to_execute = self.check_params_to_function(params)
             result = ""
             success = False
@@ -284,16 +310,12 @@ class LightAgent:
                     result = f"{plugin.description}, the execution of the function was unsuccessful."
                     success = False
             
-            cur_tool_invokation_result = InnerToolInvokationResult(plugin.name, function.name, success=success, data=result, prompt=None)
-            self.update_context(context=context,
-                                inner_tool_invokation_results=context.inner_tool_invokation_results + [cur_tool_invokation_result])
+            self.handle_plugin_results(context, plugin.name, function.name, success, result, None)
             self.log.write(f"== trigger results\n")
-            self.log.write(cur_tool_invokation_result.data)
+            self.log.write(result)
             if success:
                 # detach the successfully triggered plugin
                 detached_plugins.append(plugin)
-            else:
-                break
 
         # response step
         response = self.respond(message, context)
@@ -302,11 +324,3 @@ class LightAgent:
         self.log.close()
         return response
 
-
-    
-
-# from llms import GPT35
-# orch = LightAgent(PromptGenerator(), GPT35("gpt3.5"), PluginRunner())
-# msg = Message("Retrieve a bottle message", role="user", last_modified_datetime=datetime.now(), conversation_id="123", enabled_plugins=["web_search", "message_in_a_bottle"])
-# response = orch.chat(msg)
-# print(response)
