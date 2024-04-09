@@ -2,6 +2,7 @@
     "name": "message_in_a_bottle",
     "description": "This plugin defines a set of tools to implement **Message In A Bottle** scenario. It helps people share/look for ideas, stories, and make friends across the world.",
     "trigger_instruction": "\n  *When a user wants to retrieve a message bottle and to fetch a message bottle from the ocean, invoke `message_in_a_bottle`;\n  *When a user wants to send a message bottle and to create a message bottle and drop it into the ocean, invoke `message_in_a_bottle`;\n  *When a user wants to understand what is message in a bottle, how to use it, invoke `message_in_a_bottle`;",
+    "response_instruction": "I support Message-in-a-Bottle application. It helps user retrieve, send, reply to a message bottle.",
     "functions": [
         {
             "name": "retrieve_message_bottle",

@@ -2,7 +2,7 @@
     "name": "graphic",
     "description": "This plugin is to handle graphic related query.",
     "trigger_instruction": "\n  *When user is asking for creating, generating, designing a graphic, invoke `graphic`;\n  *When user is asking for explaining, recognizing, describing a graphic, invoke `graphic`",
-    "response_instruction": "",
+    "response_instruction": "I am able to generate a graphic for a given query or describe a graphic for an image.",
     "functions": [
         {
             "name": "draw_graphic",

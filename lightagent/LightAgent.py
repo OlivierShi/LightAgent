@@ -23,6 +23,7 @@ class LightAgent:
         self.llm = llm
         self.conv_mnger = conv_mnger
         self.default_plugins_names = ["generate_response", "withdraw"]
+        self.parsed_plugins = {}
         self.default_plugins = self.register_plugins(self.default_plugins_names) # default plugins
         self.enabled_plugins = [] # enabled plugins by the query
 
@@ -31,7 +32,9 @@ class LightAgent:
     def parse_plugin(self, plugin_name: str) -> Plugin:
         # parse the plugin name to get the plugin object
         plugin_json = json.load(open(f"{BaseConfig.BASE_DIR}/plugins/spec/{plugin_name}.json", "r"))
-        return Plugin.from_json(plugin_json)
+        parsed = Plugin.from_json(plugin_json)
+        self.parsed_plugins[plugin_name] = parsed
+        return parsed
 
     def register_plugins(self, plugin_names: list):
         # todo: load the plugins based on plugin name.
@@ -192,6 +195,15 @@ class LightAgent:
                     parameters_to_execute[param.name] = param.default
         return parameters_to_execute, missing_required_parameters_to_execute
 
+    def include_plugins_for_response_instruction(self, inner_tool_invokation_results: List[InnerToolInvokationResult]) -> List[Plugin]:
+        plugins = self.default_plugins
+        plugins_names = [_p.name for _p in plugins]
+
+        for tool_invocation in inner_tool_invokation_results:
+            if tool_invocation.plugin_name not in plugins_names:
+                plugins.append(self.parsed_plugins[tool_invocation.plugin_name])
+        return plugins
+
     def respond(self,
                 message: Message,
                 context: Context,
@@ -205,8 +217,12 @@ class LightAgent:
         prompt_conversation_history = self.prompt_generator.format_conversation_history(conversation_history)
         prompt_inner_tool_invokation_results = self.prompt_generator.format_inner_tool_invokation_results(inner_tool_invokation_results)
         
+        included_plugins = self.include_plugins_for_response_instruction(inner_tool_invokation_results)
+        prompt_responding_instruction = self.prompt_generator.format_prompt_responding_instruction(included_plugins)
+
         success = all([res.success for res in inner_tool_invokation_results])
-        prompt_responding = self.prompt_generator.format_prompt_responding(prompt_user_profile,
+        prompt_responding = self.prompt_generator.format_prompt_responding(prompt_responding_instruction,
+                                                                           prompt_user_profile,
                                                                            prompt_conversation_history,
                                                                            prompt_inner_tool_invokation_results,
                                                                            query,

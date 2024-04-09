@@ -47,22 +47,25 @@ class Plugin:
     def __init__(self, name,
                  description,
                  trigger_instruction,
+                 response_instruction,
                  functions: List[Function],):
         self.name = name
         self.description = description
         self.trigger_instruction = trigger_instruction
+        self.response_instruction = response_instruction
         self.functions = functions
 
     def __str__(self) -> str:
-        return f"Plugin: {self.name}, {self.description}, {self.trigger_instruction}, {self.functions}"
+        return f"Plugin: {self.name}, {self.description}, {self.trigger_instruction}, {self.response_instruction}, {self.functions}"
 
     @staticmethod
     def from_json(data):
         name = data.get("name", "")
         description = data.get("description", "")
         trigger_instruction = data.get("trigger_instruction", "")
+        response_instruction = data.get("response_instruction", "")
         functions = data.get("functions", [])
-        return Plugin(name, description, trigger_instruction, [Function.from_json(f) for f in functions])
+        return Plugin(name, description, trigger_instruction, response_instruction, [Function.from_json(f) for f in functions])
     
 class UserProfile:
     def __init__(self, id, name, datetime:str = datetime.now().strftime("%Y-%m-%d %H:%M:%S"), location:str = None):

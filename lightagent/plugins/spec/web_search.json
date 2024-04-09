@@ -2,7 +2,7 @@
     "name": "web_search",
     "description": "Search the web for a given query",
     "trigger_instruction": "\n  *When user is seeking real-time information and the latest developments, like news, weather, trending info, or I need to ensure refreshness of info to address user query, invoke `web_search`;\n  *When user is seeking historical context, Scientific and Technical Knowledge, detailed explanations of concepts, or Educational Purposes, invoke `web_search`;;\n  *If the user query is vague or having no explicit intent, invoke `web_search`;",
-    "response_instruction": "The web search results are listed, I need consider that to address user query.",
+    "response_instruction": "I am capable to search and get the information from the internet to better answer user's questions and queries.",
     "functions": [
         {
             "name": "search_news",
