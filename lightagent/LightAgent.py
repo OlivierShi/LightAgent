@@ -1,5 +1,6 @@
 import json
 from typing import List, Tuple
+import time
 from datetime import datetime
 from prompt_generator import PromptGenerator
 from models import Plugin, Message, Function, Parameter, Context, UserProfile, InnerToolInvokationResult
@@ -8,6 +9,7 @@ from plugins import PluginRunner
 from postprocessor import Postprocessor
 from conversation_manager import ConversationManager
 from config import BaseConfig
+from helpers import Helpers
 
 ASK_FOR_USER_INPUT = "ASK_FOR_USER_INPUT"
 
@@ -43,7 +45,7 @@ class LightAgent:
                 left_plugins.append(plugin)
         return left_plugins
 
-    def detect_plugin(self, message: Message, context: Context, detached_plugins: List[Plugin] = []) -> Plugin:
+    def detect_plugin(self, message: Message, context: Context, detached_plugins: List[Plugin] = [], metrics={}) -> Plugin:
         """
         Given message, determine which plugin is relevant.
         Currently, each time can only detect one plugin.
@@ -80,7 +82,12 @@ class LightAgent:
         self.log.write(prompt_detect_plugins)
         self.log.write("\n\n== prompt to detect plugin\n")
         self.log.write(prompt_detect_plugins)
+        start_time = time.time()
         response = self.llm.generate(prompt_detect_plugins, reasoning=True)
+        end_time = time.time()
+        
+        Helpers.metrics_helper(metrics, "perf", "detect_plugin", end_time - start_time)
+
         self.log.write(f"\n\n== response from LLM\n")
         self.log.write(response)
         processed_plugin_name = Postprocessor.try_parse_json_from_llm(response)
@@ -90,7 +97,7 @@ class LightAgent:
                 return plugin
         return None
 
-    def detect_function(self, plugin: Plugin, message: Message, context: Context) -> Function:
+    def detect_function(self, plugin: Plugin, message: Message, context: Context, metrics={}) -> Function:
         """
         Given the current plugin and the message, determine which functions of the plugin are relevant
         Currently, each time can only detect one function.
@@ -123,7 +130,11 @@ class LightAgent:
         self.log.write(prompt_detect_functions)
         self.log.write("\n\n== prompt to detect functions\n")
         self.log.write(prompt_detect_functions)
+        start_time = time.time()
         response = self.llm.generate(prompt_detect_functions, reasoning=True)
+        end_time = time.time()
+        Helpers.metrics_helper(metrics, "perf", "detect_function", end_time - start_time)
+
         self.log.write(f"\n\n== response from LLM\n")
         self.log.write(response)
         processed_function_name = Postprocessor.postprocess_llm(response)
@@ -133,7 +144,7 @@ class LightAgent:
                 return func
         return None
     
-    def extract_params_to_function(self, function: Function, message: Message, context: Context) -> List[Parameter]:
+    def extract_params_to_function(self, function: Function, message: Message, context: Context, metrics:dict) -> List[Parameter]:
         # given query and context, determine which parameters are relevant
         parameters = function.parameters
         if not parameters or len(parameters) == 0:
@@ -149,7 +160,10 @@ class LightAgent:
         self.log.write(prompt_extract_params)
         self.log.write(f"\n\n== prompt to extract parameters to the function {function.name}\n")
         self.log.write(prompt_extract_params)
+        start_time = time.time()
         response = self.llm.generate(prompt_extract_params, reasoning=True)
+        end_time = time.time()
+        Helpers.metrics_helper(metrics, "perf", "extract_params_to_function", end_time - start_time)
         self.log.write(f"\n\n== response from LLM\n")
         self.log.write(response)        
         processed_params = json.loads(Postprocessor.postprocess_llm(response))
@@ -180,7 +194,8 @@ class LightAgent:
 
     def respond(self,
                 message: Message,
-                context: Context):
+                context: Context,
+                metrics={}):
         # given query, conversation history, user profile, inner triggered results, return the response
         query = message.content
         conversation_history = context.conversation_history
@@ -200,7 +215,10 @@ class LightAgent:
         self.log.write(prompt_responding)
         self.log.write(f"\n\n== prompt to respond\n")
         self.log.write(prompt_responding)
+        start_time = time.time()
         response = self.llm.generate(prompt_responding, reasoning=False)
+        end_time = time.time()
+        Helpers.metrics_helper(metrics, "perf", "respond", end_time - start_time)
         self.log.write(f"\n\n== response from LLM\n")
         self.log.write(response)
         response = Postprocessor.postprocess_llm(response)
@@ -271,6 +289,7 @@ class LightAgent:
         # context -> conversation history, user profile, inner triggered results
         # context is agg data from `users` and `messages` tables, will not be persisted in the database.
         self.log = open(f"prompt_{message.id}.log", "w", encoding="utf-8")
+        metrics = {}
         self.log.write(f"\n== chat with message\n")
         context = self.conv_mnger.get_message_context(message)
         self.update_context(context=context, message=message, options=options)
@@ -282,19 +301,19 @@ class LightAgent:
         detached_plugins = []
         while _tool_invokation_num < self.max_tool_invokation_times:
 
-            plugin = self.detect_plugin(message, context, detached_plugins)
+            plugin = self.detect_plugin(message, context, detached_plugins, metrics)
 
             _tool_invokation_num += 1
 
             if not self.check_detected_plugin_results(context, plugin):
                 break
             
-            function = self.detect_function(plugin, message, context)
+            function = self.detect_function(plugin, message, context, metrics)
         
             if not self.check_detected_function_results(context, plugin, function):
                 break
 
-            params = self.extract_params_to_function(function, message, context)
+            params = self.extract_params_to_function(function, message, context, metrics)
 
             parameters_to_execute, missing_required_parameters_to_execute = self.check_params_to_function(params)
             result = ""
@@ -318,9 +337,9 @@ class LightAgent:
                 detached_plugins.append(plugin)
 
         # response step
-        response = self.respond(message, context)
+        response = self.respond(message, context, metrics)
 
         self.conv_mnger.save_message(message, context, response)
         self.log.close()
-        return response
+        return response, metrics
 

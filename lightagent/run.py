@@ -8,6 +8,8 @@ from models import Message
 from llms import GPT35
 from plugins import PluginRunner
 from LightAgent import LightAgent
+from helpers import Helpers
+
 if os.path.exists("run-sqlite.db"):
     os.remove("run-sqlite.db")
 db = SQLiteStorage("run-sqlite.db")
@@ -32,6 +34,7 @@ while True:
 
     message = Message(msg_id, query, datetime.now(), conv_id,  ["web_search", "message_in_a_bottle"])
     
-    response = agent.chat(message)
+    response, metrics = agent.chat(message)
+    Helpers.metrics_printer(metrics)
     print(f"LightAgent: {response}")
     print("\n")

@@ -33,7 +33,7 @@ def test_lightAgent_chat():
 
     msg = Message("Retrieve a bottle message", role="user", last_modified_datetime=datetime.now(), conversation_id="123", enabled_plugins=["web_search", "message_in_a_bottle"])
 
-    response = orch.chat(msg)
+    response, metrics = orch.chat(msg)
     print(response)
 
 def test_sqlite3():
@@ -91,22 +91,22 @@ def test_LightAgent_multiturn():
     orch = LightAgent(PromptGenerator(), GPT35("gpt3.5"), cm, PluginRunner())
 
     message = Message("123", "Who are you?", datetime.now(), "abcd",  ["web_search", "message_in_a_bottle"])
-    response = orch.chat(message)
+    response, metrics = orch.chat(message)
     print(response)
 
     message = Message("234", "What's the weather in New York City?", datetime.now(), "abcd",  ["web_search", "message_in_a_bottle"])
     
-    response = orch.chat(message)
+    response, metrics = orch.chat(message)
     print(response)    
 
     message = Message("345", "What time is it?", datetime.now(), "abcd",  ["web_search", "message_in_a_bottle"])
     
-    response = orch.chat(message)
+    response, metrics = orch.chat(message)
     print(response)    
 
     message = Message("456", "Do you know who is the wife of Yao Min?", datetime.now(), "abcd",  ["web_search", "message_in_a_bottle"])
     
-    response = orch.chat(message)
+    response, metrics = orch.chat(message)
     print(response)    
 
 
