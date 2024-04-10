@@ -91,3 +91,113 @@ LightAgent is a framework for developing applications powered by mini LLM.
     ]
   }
 ]
+
+
+[
+    {
+        "name": "open_trunk",
+        "description": "Helps the user to open the trunk of the car.",
+        "parameters": []
+    },
+    {
+        "name": "close_trunk",
+        "description": "Helps the user to close the trunk of the car.",
+        "parameters": []
+    },
+    {
+        "name": "lock_doors",
+        "description": "Locks all the doors of the car.",
+        "parameters": []
+    },
+    {
+        "name": "unlock_doors",
+        "description": "Unlocks all the doors of the car.",
+        "parameters": []
+    },
+    {
+        "name": "start_engine",
+        "description": "Starts the car's engine.",
+        "parameters": []
+    },
+    {
+        "name": "stop_engine",
+        "description": "Stops the car's engine.",
+        "parameters": []
+    },
+    {
+        "name": "activate_headlights",
+        "description": "Turns on the car's headlights.",
+        "parameters": [
+            {
+                "name": "mode",
+                "type": "string",
+                "description": "The mode of the headlights, e.g., 'auto', 'on', 'off'.",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "adjust_seat",
+        "description": "Adjusts the position of the driver's seat.",
+        "parameters": [
+            {
+                "name": "position",
+                "type": "string",
+                "description": "The desired position adjustment, e.g., 'forward', 'backward', 'up', 'down'.",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "set_temperature",
+        "description": "Sets the temperature inside the car.",
+        "parameters": [
+            {
+                "name": "temperature",
+                "type": "number",
+                "description": "The desired temperature in Celsius or Fahrenheit.",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "play_music",
+        "description": "Plays music in the car.",
+        "parameters": [
+            {
+                "name": "song_name",
+                "type": "string",
+                "description": "The name of the song to play.",
+                "required": false
+            },
+            {
+                "name": "artist_name",
+                "type": "string",
+                "description": "The name of the song's artist.",
+                "required": false
+            }
+        ]
+    },
+    {
+        "name": "navigate_to",
+        "description": "Sets the car's navigation system to the specified destination.",
+        "parameters": [
+            {
+                "name": "destination",
+                "type": "string",
+                "description": "The address or name of the destination.",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "check_fuel_level",
+        "description": "Checks the car's current fuel level.",
+        "parameters": []
+    },
+    {
+        "name": "check_tire_pressure",
+        "description": "Checks the pressure of all tires.",
+        "parameters": []
+    }
+]
