@@ -25,6 +25,12 @@ class MiniCPM2B(BaseLLM):
         self.stopping_criteria_list_general = [EosListStoppingCriteria(self.tokenizer.encode(f" {stop} ", add_special_tokens=False)[1:-1]) for stop in general_stops]
         self.stopping_criteria_list_strict = [EosListStoppingCriteria(self.tokenizer.encode(f" {stop} ", add_special_tokens=False)[1:-1]) for stop in strict_stops]
 
+        self._warmup()
+
+    def _warmup(self,):
+        response = self.llm("Hello, how are you?")
+        print(f"{self.model_name} Warmup successful.")
+
     def llm(self, query, temperature=0.1, top_p=0.8, stopping_criteria=None):
         if stopping_criteria is None:
             stopping_criteria = self.stopping_criteria_list_general

@@ -196,8 +196,11 @@ class LightAgent:
         return parameters_to_execute, missing_required_parameters_to_execute
 
     def include_plugins_for_response_instruction(self, inner_tool_invokation_results: List[InnerToolInvokationResult]) -> List[Plugin]:
-        plugins = self.default_plugins
-        plugins_names = [_p.name for _p in plugins]
+        plugins = []
+        plugins_names = []
+        for _p in self.enabled_plugins:
+            plugins.append(_p)
+            plugins_names.append(_p.name)
 
         for tool_invocation in inner_tool_invokation_results:
             if tool_invocation.plugin_name not in plugins_names:
@@ -249,10 +252,13 @@ class LightAgent:
                 prompt_to_ask_for_user_input += f"The {param.name} is missing when processing your query.\n"
         return prompt_to_ask_for_user_input
 
-    def execute_function(self, plugin: Plugin, function: Function, parameters: dict):
+    def execute_function(self, plugin: Plugin, function: Function, parameters: dict, metrics={}):
         # given function and params, execute the function
-        # todo: implement the function interface;
-        return self.plugin_runner.run(plugin.name, function.name, parameters)
+        start_time = time.time()
+        results = self.plugin_runner.run(plugin.name, function.name, parameters)
+        end_time = time.time()
+        Helpers.metrics_helper(metrics, "perf", "execute_function", end_time - start_time)
+        return results
 
     def update_context(self, context: Context = None, message: Message = None, user_profile: UserProfile=None, inner_tool_invokation_results: List[InnerToolInvokationResult] = [], options: dict = {}):
         # given trigger_results and context, update the context
@@ -339,7 +345,7 @@ class LightAgent:
                 success = False
             else:
                 try:
-                    result = self.execute_function(plugin, function, parameters_to_execute)
+                    result = self.execute_function(plugin, function, parameters_to_execute, metrics)
                     success = True
                 except:
                     result = f"{plugin.description}, the execution of the function was unsuccessful."

@@ -59,7 +59,6 @@ class PromptGenerator:
     def format_prompt_responding_instruction(self, included_plugins: List[Plugin]):
         prompt_responding_instruction = ""
         for plugin in included_plugins:
-            print(f"{plugin.name}: {plugin.response_instruction}")
             prompt_responding_instruction += f"- {plugin.response_instruction}\n"
         return prompt_responding_instruction.strip()
     
@@ -118,8 +117,6 @@ class PromptGenerator:
             conversation_history = ""
         if self._is_none_or_whitespace(inner_tool_invokation_results):
             inner_tool_invokation_results = ""
-        print(response_instruction)
-        print(self.prompt_responding)
         responding_template = self.prompt_responding if success else self.prompt_responding_failure
         return responding_template.format(
             response_instruction=response_instruction,

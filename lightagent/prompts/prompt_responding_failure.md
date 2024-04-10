@@ -24,7 +24,7 @@ user: what's the weather today.
     * I need ask for user to understand the missing parameter `market`. I cannot provide to the user directly since i have not done search news to get the information.
 ## Predicting Assistant Response
 user: what's the weather today.
-assistant: Hello Mike, I hope you're doing great! To adequately address your query, I need to search for genuine information. It appears that a crucial parameter, market, was missing in my search attempt. Could you kindly provide this parameter to ensure a precise and informed response?
+assistant: Hello, I hope you're doing great! To adequately address your query, I need to search for genuine information. It appears that a crucial parameter, market, was missing in my search attempt. Could you kindly provide this parameter to ensure a precise and informed response?
 <|im_end|>
 <|im_start|>
 ## User Profile

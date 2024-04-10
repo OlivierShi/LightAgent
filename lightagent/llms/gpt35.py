@@ -10,6 +10,12 @@ class GPT35(BaseLLM):
             api_key=BaseConfig.openai_api_key,  
             api_version=BaseConfig.openai_api_version
             )
+        
+        self._warmup()
+
+    def _warmup(self,):
+        response = self.generate("Hello, how are you?")
+        print(f"{self.model_name} Warmup successful.")
 
     def generate(self, input, reasoning=True):
         stops = ["<|im_end|>", "<|im_start|>", "###", "\n\n"] if reasoning else ["<|im_end|>", "<|im_start|>", "###"]

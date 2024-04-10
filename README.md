@@ -8,4 +8,5 @@ LightAgent is a framework for developing applications powered by mini LLM.
 3. add assistant plugin.
 4. reduce the tokens of the conversation_history
 5. fix bugs.
-6. add warmup
+6. add warmup &#9745;
+7. improve web search api

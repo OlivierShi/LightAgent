@@ -32,7 +32,7 @@ while True:
     if query == "exit":
         break
 
-    message = Message(msg_id, query, datetime.now(), conv_id,  ["web_search", "message_in_a_bottle"])
+    message = Message(msg_id, query, datetime.now(), conv_id,  ["web_search",])
     
     response, metrics = agent.chat(message)
     Helpers.metrics_printer(metrics)
