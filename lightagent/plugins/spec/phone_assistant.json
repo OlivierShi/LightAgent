@@ -1,0 +1,82 @@
+{
+    "name": "phone_assistant",
+    "description": "The phone assistant is a versatile tool designed to facilitate a wide range of tasks on a user's phone.",
+    "trigger_instruction": "\n  *When a Phone user wants to query for calls, messaging, alarms, app management, music playback, weather checks, navigation, camera control, invoke `phone_assistant`;",
+    "response_instruction": "I support AI Phone Assistant application, including calls, messaging, alarms, app management, music playback, weather checks, navigation, camera control, etc.",
+    "functions": [
+        {
+            "name": "place_call",
+            "description": "Helps the user to place a phone call to a specified phone number or contact stored in the phone.",
+            "trigger_instruction": "\n  *When a user wants to place a phone call, invoke `place_call`;",
+            "response_instruction": "I have placed a call to the specified phone number.",
+            "parameters": [
+                {
+                    "name": "phone_number",
+                    "type": "string",
+                    "required": true,
+                    "description": "The phone number to call"
+                }
+            ]
+        },
+        {
+            "name": "send_sms",
+            "description": "Sends an SMS message to a specified phone number with a user-defined message.",
+            "trigger_instruction": "\n  *When a user wants to send an SMS message, invoke `send_sms`;",
+            "response_instruction": "I have sent the SMS message to the specified phone number.",
+            "parameters": [
+                {
+                    "name": "phone_number",
+                    "type": "string",
+                    "required": true,
+                    "description": "The phone number to send the message to"
+                },
+                {
+                    "name": "message",
+                    "type": "string",
+                    "required": true,
+                    "description": "The message to send"
+                }
+            ]
+        },
+        {
+            "name": "set_alarm",
+            "description": "Sets an alarm for the user at a specified time.",
+            "trigger_instruction": "\n  *When a user wants to set an alarm, invoke `set_alarm`;",
+            "response_instruction": "I have set the alarm for the specified time.",
+            "parameters": [
+                {
+                    "name": "time",
+                    "type": "string",
+                    "required": true,
+                    "description": "The time to set the alarm for"
+                }
+            ]
+        },
+        {
+            "name": "create_reminder",
+            "description": "Creates a reminder with a specified title, message, and time.",
+            "trigger_instruction": "\n  *When a user wants to create a reminder, invoke `create_reminder`;",
+            "response_instruction": "I have created a reminder with the specified title, message, and time.",
+            "parameters": [
+                {
+                    "name": "title",
+                    "type": "string",
+                    "required": true,
+                    "description": "The title of the reminder"
+                },
+                {
+                    "name": "message",
+                    "type": "string",
+                    "required": true,
+                    "description": "The message of the reminder"
+                },
+                {
+                    "name": "time",
+                    "type": "string",
+                    "required": true,
+                    "description": "The time of the reminder"
+                }
+            ]
+        }
+    ]
+}
