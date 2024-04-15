@@ -27,13 +27,13 @@
                 {
                     "name": "phone_number",
                     "type": "string",
-                    "required": true,
+                    "required": false,
                     "description": "The phone number to send the message to"
                 },
                 {
                     "name": "message",
                     "type": "string",
-                    "required": true,
+                    "required": false,
                     "description": "The message to send"
                 }
             ]
@@ -61,13 +61,13 @@
                 {
                     "name": "title",
                     "type": "string",
-                    "required": true,
+                    "required": false,
                     "description": "The title of the reminder"
                 },
                 {
                     "name": "message",
                     "type": "string",
-                    "required": true,
+                    "required": false,
                     "description": "The message of the reminder"
                 },
                 {
@@ -75,6 +75,34 @@
                     "type": "string",
                     "required": true,
                     "description": "The time of the reminder"
+                }
+            ]
+        },
+        {
+            "name": "open_app",
+            "description": "Opens an application installed on the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to open an app, invoke `open_app`;",
+            "response_instruction": "I have opened the specified app.",
+            "parameters": [
+                {
+                    "name": "app_name",
+                    "type": "string",
+                    "required": true,
+                    "description": "The name of the app to open"
+                }
+            ]
+        },
+        {
+            "name": "play_music",
+            "description": "Plays music on the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to play music, invoke `play_music`;",
+            "response_instruction": "I have started playing music.",
+            "parameters": [
+                {
+                    "name": "query",
+                    "type": "string",
+                    "required": false,
+                    "description": "A search query to find the music to play, such as a song title, artist name, or playlist name."
                 }
             ]
         }

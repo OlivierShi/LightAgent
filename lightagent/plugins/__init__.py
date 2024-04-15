@@ -2,6 +2,7 @@ from typing import List
 from plugins.impl.web_search import WebSearch
 from plugins.impl.graphic import Graphic
 from plugins.impl.message_in_a_bottle import MessageInABottle
+from plugins.impl.phone_assistant import PhoneAssistant
 
 
 class PluginRunner:
@@ -9,6 +10,7 @@ class PluginRunner:
         self.web_search = WebSearch()
         self.graphic = Graphic()
         self.message_in_a_bottle = MessageInABottle()
+        self.phone_assistant = PhoneAssistant()
 
     def run(self, plugin_name: str, function_name: str, params: dict):
         plugin = getattr(self, plugin_name)

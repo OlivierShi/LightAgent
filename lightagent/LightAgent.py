@@ -18,7 +18,7 @@ class LightAgent:
     Since the mini-LLM is a light-weight version of the LLM, the agent to drive LLM need to be specific for light-weight. It means the task to handle the query need to be decomposed into minimized tasks. 
     """
     def __init__(self, prompt_generator: PromptGenerator, llm: BaseLLM, conv_mnger: ConversationManager, plugin_runner: PluginRunner = None):
-        self.max_tool_invokation_times = 2
+        self.max_tool_invokation_times = 1
         self.prompt_generator = prompt_generator
         self.llm = llm
         self.conv_mnger = conv_mnger
@@ -97,6 +97,7 @@ class LightAgent:
         for plugin in self.enabled_plugins + self.default_plugins:
             if processed_plugin_name == plugin.name:
                 self.log.write(f"== detected plugin: {plugin.name}\n")
+                Helpers.metrics_log_helper(metrics, "log", f"detect_plugin::{plugin.name}", end_time - start_time)
                 return plugin
         return None
 
@@ -144,6 +145,7 @@ class LightAgent:
         for func in functions:
             if processed_function_name == func.name:
                 self.log.write(f"== detected function: {func.name}\n")
+                Helpers.metrics_log_helper(metrics, "log", f"detect_function::{func.name}", end_time - start_time)
                 return func
         return None
     
@@ -176,6 +178,7 @@ class LightAgent:
                 if k == param.name and v is not None:
                     param.value = {k: v}
                     self.log.write(f"== extracted parameter: {k} -> {v}\n")
+                    Helpers.metrics_log_helper(metrics, "log", f"extract_params_to_function::{k} -> {v}", end_time - start_time)
         return parameters
 
     def check_params_to_function(self, parameters: List[Parameter]) -> Tuple[dict, dict]:
@@ -238,6 +241,7 @@ class LightAgent:
         response = self.llm.generate(prompt_responding, reasoning=False)
         end_time = time.time()
         Helpers.metrics_helper(metrics, "perf", "respond", end_time - start_time)
+        Helpers.metrics_log_helper(metrics, "log", f"respond::{response}", end_time - start_time)
         self.log.write(f"\n\n== response from LLM\n")
         self.log.write(response)
         response = Postprocessor.postprocess_llm(response)
@@ -258,6 +262,7 @@ class LightAgent:
         results = self.plugin_runner.run(plugin.name, function.name, parameters)
         end_time = time.time()
         Helpers.metrics_helper(metrics, "perf", "execute_function", end_time - start_time)
+        Helpers.metrics_log_helper(metrics, "log", f"execute_function::{results[:150]}...", end_time - start_time)
         return results
 
     def update_context(self, context: Context = None, message: Message = None, user_profile: UserProfile=None, inner_tool_invokation_results: List[InnerToolInvokationResult] = [], options: dict = {}):
