@@ -7,19 +7,20 @@ from datetime import datetime
 class PromptGenerator:
     def __init__(self,):
         self.prompt_tools_detection = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_tools_detection.md", "r").read()
-        self.prompt_tools_detection_description = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_tools_detection_description.md", "r").read()
-        self.prompt_tools_detection_trigger = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_tools_detection_trigger.md", "r").read()
         self.prompt_function_detection = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_function_detection.md", "r").read()
-        self.prompt_function_parameters_extraction_parameter = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_function_parameters_extraction_parameter_format.md", "r").read()
         self.prompt_function_parameters_extraction = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_function_parameters_extraction.md", "r").read()
         self.prompt_responding = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_responding.md", "r").read()
         self.prompt_responding_failure = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_responding_failure.md", "r").read()
 
     def format_prompt_tools_detection_description(self, name: str, description: str):
-        return self.prompt_tools_detection_description.format(name=name, description=description)
+        return """- `{name}`: {description}""" \
+                .replace("{name}", name)       \
+                .replace("{description}", description)
     
     def format_prompt_tools_detection_trigger(self, name: str, trigger_instruction: str):
-        return self.prompt_tools_detection_trigger.format(name=name, trigger_instruction=trigger_instruction)
+        return """- Decide whether to invoke {\"tool\":\"{name}\"}:{trigger_instruction}""" \
+                .replace("{name}", name)                                                    \
+                .replace("{trigger_instruction}", trigger_instruction)
     
     def format_prompt_tools_detection(self, description: str, trigger_instruction: str, conversation_history:str, inner_tool_invokation_results:str, query: str, examples: str = None):
         
@@ -48,7 +49,10 @@ class PromptGenerator:
                 .replace("{query}", query)
         
     def format_prompt_function_parameters_extraction_parameter(self, name: str, type: str, description: str):
-        return self.prompt_function_parameters_extraction_parameter.format(name=name, type=type, description=description)
+        return """        {name} ({type}): {description}.""" \
+                .replace("{name}", name)                     \
+                .replace("{type}", type)                     \
+                .replace("{description}", description)
     
     def format_prompt_function_parameters_extraction(self, function_name: str, description: str, parameters: str, query: str, examples: str = None):
         if self._is_none_or_whitespace(examples):
