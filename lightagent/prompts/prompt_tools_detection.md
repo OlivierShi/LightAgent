@@ -6,7 +6,7 @@ Determine which below tool need to be triggered based on the user input query.
 {trigger_instruction}
 
 {examples}
-<|im_start|>
+<assistant>Detection started.
 ## Conversation History
 <user>Do you hate me?
 <assistant>Sorry, i don't understand and cannot help with that.
@@ -17,8 +17,8 @@ Determine which below tool need to be triggered based on the user input query.
 <user>today's weather
 <assistant>{"tool":"generate_response"}
 <assistant>Thoughts: The search results are listed in the Completed Inner Tool Invocation Results, so i must invoke {"tool":"generate_response"} to provide answer.
-<|im_end|>
-<|im_start|>
+<assistant>Detection ended.
+<assistant>Detection started.
 ## Conversation History
 {conversation_history}
 ## Completed Inner Tool Invocation Results

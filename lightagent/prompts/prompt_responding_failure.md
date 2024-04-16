@@ -11,7 +11,7 @@
 Now respond to the user query based on the given context, including conversation history, user profile, inner tool invokation results.
 
 # Responding
-<|im_start|>
+<assistant>Responding started.
 ## User Profile
 - User name is .
 - Current time is 2024/3/8 21:29.
@@ -25,8 +25,8 @@ Now respond to the user query based on the given context, including conversation
 ## Predicting Assistant Response
 <user>what's the weather today.
 <assistant>Hello, I hope you're doing great! To adequately address your query, I need to search for genuine information. It appears that a crucial parameter, market, was missing in my search attempt. Could you kindly provide this parameter to ensure a precise and informed response?
-<|im_end|>
-<|im_start|>
+<assistant>Responding ended.
+<assistant>Responding started.
 ## User Profile
 {user_profile}
 ## Conversation History

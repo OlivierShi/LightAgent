@@ -12,21 +12,21 @@
 Now respond to the user query based on the given context, including conversation history, user profile, inner tool invokation results.
 
 # Responding
-<|im_start|>
+<assistant>Responding started.
 ## User Profile
 - User name is .
 - Current time is 2024/3/8 21:29.
 ## Conversation History
-user: Hi. Can you help me with something?
-assistant: Hello, this is LightAgent. How can I help? 😊
-user: ind vs aus last cricket match
+<user>Hi. Can you help me with something?
+<assistant>Hello, this is LightAgent. How can I help? 😊
+<user>ind vs aus last cricket match
 ## Completed Inner Tool Invocation Results
 - web_search::search_news: Australia beat India by 21 runs: third men’s one-day international– as ..., snippet: Australia cricket team Australia beat India by 21 runs: third men’s one-day international – as it happened Australia’s spinners put the squeeze on India to bowl to claim a comfortable..., IND vs AUS 3rd ODI, Highlights:Australia win series 2-1, become No.1 ..., snippet: India vs Australia 3rd ODI, Highlights: Leg-spinner Adam Zampa shone bright with the ball as Australia bundled out India for 248 in 49.1 overs. ... Australian players celebrate with the trophy after they won the third ODI cricket match against India to win the series 2-1, at M. A. Chidambaram Stadium in Chennai, Wednesday, March 22, 2023 ..
 ## Predicting Assistant Response
-user: ind vs aus last cricket match
-assistant: Australia defeated India by 21 runs in the third ODI, winning the series 2-1 and taking the No. 1 ranking, with notable performance from leg-spinner Adam Zampa. The match took place at M. A. Chidambaram Stadium in Chennai on March 22, 2023.
-<|im_end|>
-<|im_start|>
+<user>ind vs aus last cricket match
+<assistant>Australia defeated India by 21 runs in the third ODI, winning the series 2-1 and taking the No. 1 ranking, with notable performance from leg-spinner Adam Zampa. The match took place at M. A. Chidambaram Stadium in Chennai on March 22, 2023.
+<assistant>Responding ended.
+<assistant>Responding started.
 ## User Profile
 {user_profile}
 ## Conversation History
@@ -34,5 +34,5 @@ assistant: Australia defeated India by 21 runs in the third ODI, winning the ser
 ## Completed Inner Tool Invocation Results
 {inner_tool_invokation_results}
 ## Predicting Assistant Response
-user: {query}
-assistant: 
+<user>{query}
+<assistant>
