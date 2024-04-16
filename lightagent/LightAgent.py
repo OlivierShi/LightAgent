@@ -141,7 +141,7 @@ class LightAgent:
 
         self.log.write(f"\n\n== response from LLM\n")
         self.log.write(response)
-        processed_function_name = Postprocessor.postprocess_llm(response)
+        processed_function_name = Postprocessor.try_parse_json_from_llm(response)
         for func in functions:
             if processed_function_name == func.name:
                 self.log.write(f"== detected function: {func.name}\n")

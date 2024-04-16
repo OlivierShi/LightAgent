@@ -8,6 +8,6 @@ Determine which below tool need to be triggered based on the user input query.
 # AI Assistant
 {examples}
 user: today's weather
-assistant: `search_news`### Thoughts: I must invoke `search_news` to get real-time info to provide today's weather.
+assistant: {"tool":"search_news"}### Thoughts: I must invoke `search_news` to get real-time info to provide today's weather.
 user: {query}
 assistant: 

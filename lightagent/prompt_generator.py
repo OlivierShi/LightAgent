@@ -41,7 +41,11 @@ class PromptGenerator:
     def format_prompt_function_detection(self, description: str, trigger_instruction: str, query: str, examples: str = None):
         if self._is_none_or_whitespace(examples):
             examples = ""
-            return self.prompt_function_detection.format(description=description, trigger_instruction=trigger_instruction, examples=examples, query=query)
+        return self.prompt_function_detection                          \
+                .replace("{description}", description)                 \
+                .replace("{trigger_instruction}", trigger_instruction) \
+                .replace("{examples}", examples)                       \
+                .replace("{query}", query)
         
     def format_prompt_function_parameters_extraction_parameter(self, name: str, type: str, description: str):
         return self.prompt_function_parameters_extraction_parameter.format(name=name, type=type, description=description)
