@@ -44,6 +44,7 @@ class MiniCPM2B(BaseLLM):
             role="assistant",
             temperature=temperature,
             top_p=top_p,
+            max_length=768,
             pad_token_id=self.tokenizer.eos_token_id,
             stopping_criteria=stopping_criteria)
         torch.cuda.empty_cache()

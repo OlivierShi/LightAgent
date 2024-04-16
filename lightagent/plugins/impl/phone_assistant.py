@@ -4,7 +4,7 @@ class PhoneAssistant:
         self.name = name
 
     def place_call(self, phone_number: str):
-        return f"Calling {phone_number}."
+        return f"I have placed the call to {phone_number}."
 
     def send_sms(self, phone_number: str = None, message: str = None):
 
@@ -18,7 +18,7 @@ class PhoneAssistant:
         return response
 
     def set_alarm(self, time: str):
-        return f"Setting alarm for {time}."
+        return f"I have set the alarm for the time {time}."
 
     def create_reminder(self, time: str, title: str = None, message: str = None):
         if title is None or title == "":
@@ -26,11 +26,11 @@ class PhoneAssistant:
         if message is None or message == "":
             message = f"Reminder {time}"
 
-        return f"Creating reminder for {time} with title {title} and message {message}."
+        return f"I have created a reminder for you on {time}."
     
     def open_app(self, app_name: str):
-        return f"Opening {app_name}."
+        return f"I have opened the app {app_name}."
     
     def play_music(self, query: str):
-        return f"Playing music with query {query}."
+        return f"I have started playing music for {query}."
     
