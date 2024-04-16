@@ -16,15 +16,15 @@ Now respond to the user query based on the given context, including conversation
 - User name is .
 - Current time is 2024/3/8 21:29.
 ## Conversation History
-user: Hi. Can you help me with something?
-assistant: Hello, this is LightAgent. How can I help? 😊
-user: what's the weather today.
+<user>Hi, Can you help me with something?
+<assistant>Hello, this is LightAgent. How can I help? 😊
+<user>what's the weather today.
 ## Completed Inner Tool Invocation Results
 - web_search::search_news: The `market` is missing when processing your query.
     * I need ask for user to understand the missing parameter `market`. I cannot provide to the user directly since i have not done search news to get the information.
 ## Predicting Assistant Response
-user: what's the weather today.
-assistant: Hello, I hope you're doing great! To adequately address your query, I need to search for genuine information. It appears that a crucial parameter, market, was missing in my search attempt. Could you kindly provide this parameter to ensure a precise and informed response?
+<user>what's the weather today.
+<assistant>Hello, I hope you're doing great! To adequately address your query, I need to search for genuine information. It appears that a crucial parameter, market, was missing in my search attempt. Could you kindly provide this parameter to ensure a precise and informed response?
 <|im_end|>
 <|im_start|>
 ## User Profile
@@ -34,5 +34,5 @@ assistant: Hello, I hope you're doing great! To adequately address your query, I
 ## Completed Inner Tool Invocation Results
 {inner_tool_invokation_results}
 ## Predicting Assistant Response
-user: {query}
-assistant: 
+<user>{query}
+<assistant>

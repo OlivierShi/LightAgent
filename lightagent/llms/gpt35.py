@@ -11,6 +11,8 @@ class GPT35(BaseLLM):
             api_version=BaseConfig.openai_api_version
             )
         
+        self.role_user = "user: "
+        self.role_system = "assistant: "
         self._warmup()
 
     def _warmup(self,):
@@ -19,6 +21,8 @@ class GPT35(BaseLLM):
 
     def generate(self, input, reasoning=True):
         stops = ["<|im_end|>", "<|im_start|>", "###", "\n\n"] if reasoning else ["<|im_end|>", "<|im_start|>", "###"]
+        input = input.replace("<user>", self.role_user).replace("<assistant>", self.role_system)
+
         messages = [{"role":"system","content":input}]
         completion = self.client.chat.completions.create(
             model=BaseConfig.openai_api_model,

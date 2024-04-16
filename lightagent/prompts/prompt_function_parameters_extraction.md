@@ -13,7 +13,7 @@ The output is in the form of a dictionary with the parameter name as the key and
 
 # AI Assistant
 {examples}
-user: What's the weather today in Beijing.
-assistant: {"query": "Today's weather in Beijing"}### Thoughts: User is asking for today's weather in Beijing, I must take "Today's weather in Beijing" as search query.
-user: {query}
-assistant: 
+<user>What's the weather today in Beijing.
+<assistant>{"query": "Today's weather in Beijing"}### Thoughts: User is asking for today's weather in Beijing, I must take "Today's weather in Beijing" as search query.
+<user>{query}
+<assistant>

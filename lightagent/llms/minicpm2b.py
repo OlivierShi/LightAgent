@@ -25,6 +25,8 @@ class MiniCPM2B(BaseLLM):
         self.stopping_criteria_list_general = [EosListStoppingCriteria(self.tokenizer.encode(f" {stop} ", add_special_tokens=False)[1:-1]) for stop in general_stops]
         self.stopping_criteria_list_strict = [EosListStoppingCriteria(self.tokenizer.encode(f" {stop} ", add_special_tokens=False)[1:-1]) for stop in strict_stops]
 
+        self.role_user = "<用户>"
+        self.role_system = "<AI>"
         self._warmup()
 
     def _warmup(self,):
@@ -35,9 +37,11 @@ class MiniCPM2B(BaseLLM):
         if stopping_criteria is None:
             stopping_criteria = self.stopping_criteria_list_general
 
+        query = query.replace("<user>", self.role_user).replace("<assistant>", self.role_system)
         responds, history = self.model.chat(
             self.tokenizer,
             query,
+            role="assistant",
             temperature=temperature,
             top_p=top_p,
             pad_token_id=self.tokenizer.eos_token_id,
