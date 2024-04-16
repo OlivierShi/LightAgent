@@ -20,7 +20,7 @@ Now respond to the user query based on the given context, including conversation
 <assistant>Hello, this is LightAgent. How can I help? 😊
 <user>what's the weather today.
 ## Completed Inner Tool Invocation Results
-- web_search::search_news: The `market` is missing when processing your query.
+<assistant>web_search::search_news: The `market` is missing when processing your query.
     * I need ask for user to understand the missing parameter `market`. I cannot provide to the user directly since i have not done search news to get the information.
 ## Predicting Assistant Response
 <user>what's the weather today.

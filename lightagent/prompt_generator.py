@@ -107,7 +107,7 @@ class PromptGenerator:
         
         prompt_inner_tool_invokation_results = ""
         for result in inner_tool_invokation_results:
-            prompt_inner_tool_invokation_results += f"- {result.plugin_name}::{result.function_name}: {result.data}\n"
+            prompt_inner_tool_invokation_results += f"<assistant>{result.plugin_name}::{result.function_name}: {result.data}\n"
             if result.prompt is not None:
                 prompt_inner_tool_invokation_results += f"    * Prompt: {result.prompt}\n"
         return prompt_inner_tool_invokation_results.strip()

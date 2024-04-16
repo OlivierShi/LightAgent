@@ -106,5 +106,11 @@
                 }
             ]
         }
-    ]
+    ],
+    "examples": {
+        "tool_detection": "<assistant>Detection started.\n## Conversation History\n<user>Do you hate me?\n<assistant>Sorry, i don't understand and cannot help with that.\n<user>please reminder me on tomorrow 9 PM.\n## Completed Inner Tool Invocation Results\n\n## Predicting Tool Invocation Response\n<user>please reminder me on tomorrow 9 PM.\n<assistant>{\"tool\":\"phone_assistant\"}\n<assistant>Thoughts: I must invoke {\"tool\":\"phone_assistant\"} to assist users on their phone.\n<assistant>Detection ended.",
+        "function_detection": "<user>please reminder me on tomorrow 9 PM.\n<assistant>{\"tool\":\"create_reminder\"}\n<assistant>Thoughts: I must invoke {\"tool\":\"create_reminder\"} to assist in remindering user on tomorrow 9pm.",
+        "parameters_extraction": "<user>please reminder me on tomorrow 9 PM.\n<assistant>{\"time\": \"tomorrow 21:00:00\"}\n<assistant>Thoughts: User is asking for create reminder on tomorrow 9PM, the parameter is {\"time\": \"tomorrow 21:00:00\"}",
+        "response": ""
+    }
 }

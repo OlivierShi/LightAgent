@@ -11,8 +11,8 @@ class GPT35(BaseLLM):
             api_version=BaseConfig.openai_api_version
             )
         
-        self.role_user = "user: "
-        self.role_system = "assistant: "
+        self.role_user = "user:"
+        self.role_system = "assistant:"
         self._warmup()
 
     def _warmup(self,):
@@ -20,7 +20,7 @@ class GPT35(BaseLLM):
         print(f"{self.model_name} Warmup successful.")
 
     def generate(self, input, reasoning=True):
-        stops = ["<|im_end|>", "<|im_start|>", "###", "\n\n"] if reasoning else ["<|im_end|>", "<|im_start|>", "###"]
+        stops = ["\n\n", self.role_system] if reasoning else [self.role_system]
         input = input.replace("<user>", self.role_user).replace("<assistant>", self.role_system)
 
         messages = [{"role":"system","content":input}]

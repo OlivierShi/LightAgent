@@ -48,12 +48,14 @@ class Plugin:
                  description,
                  trigger_instruction,
                  response_instruction,
-                 functions: List[Function],):
+                 functions: List[Function],
+                 examples: dict = None):
         self.name = name
         self.description = description
         self.trigger_instruction = trigger_instruction
         self.response_instruction = response_instruction
         self.functions = functions
+        self.examples = examples
 
     def __str__(self) -> str:
         return f"Plugin: {self.name}, {self.description}, {self.trigger_instruction}, {self.response_instruction}, {self.functions}"
@@ -65,7 +67,8 @@ class Plugin:
         trigger_instruction = data.get("trigger_instruction", "")
         response_instruction = data.get("response_instruction", "")
         functions = data.get("functions", [])
-        return Plugin(name, description, trigger_instruction, response_instruction, [Function.from_json(f) for f in functions])
+        examples = data.get("examples", None)
+        return Plugin(name, description, trigger_instruction, response_instruction, [Function.from_json(f) for f in functions], examples)
     
 class UserProfile:
     def __init__(self, id, name, datetime:str = datetime.now().strftime("%Y-%m-%d %H:%M:%S"), location:str = None):

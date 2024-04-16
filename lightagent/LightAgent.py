@@ -62,6 +62,7 @@ class LightAgent:
 
         plugins_description = ""
         plugins_trigger = ""
+        examples = ""
 
         plugins_to_detect = self.detach_plugins(self.enabled_plugins + self.default_plugins, detached_plugins)
         for plugin in plugins_to_detect:
@@ -70,8 +71,13 @@ class LightAgent:
 
             plugins_trigger += self.prompt_generator.format_prompt_tools_detection_trigger(plugin.name, plugin.trigger_instruction)
             plugins_trigger += "\n"
+
+            if plugin.examples and "tool_detection" in plugin.examples:
+                examples += plugin.examples["tool_detection"]
+                examples += "\n"
         plugins_description = plugins_description.strip("\n")
         plugins_trigger = plugins_trigger.strip("\n")
+        examples = examples.strip("\n")
 
         query = message.content
         conversation_history = context.conversation_history
@@ -79,7 +85,7 @@ class LightAgent:
         prompt_conversation_history = self.prompt_generator.format_conversation_history(conversation_history)
         prompt_inner_tool_invokation_results = self.prompt_generator.format_inner_tool_invokation_results(inner_tool_invokation_results)
         
-        prompt_detect_plugins = self.prompt_generator.format_prompt_tools_detection(plugins_description, plugins_trigger, prompt_conversation_history, prompt_inner_tool_invokation_results, query)
+        prompt_detect_plugins = self.prompt_generator.format_prompt_tools_detection(plugins_description, plugins_trigger, prompt_conversation_history, prompt_inner_tool_invokation_results, query, examples)
 
         self.log.write("\n\n== prompt to detect plugin\n")
         self.log.write(prompt_detect_plugins)
@@ -121,14 +127,23 @@ class LightAgent:
         
         description = ""
         trigger_instruction = ""
+        examples = ""
+
         for func in functions:
             description += self.prompt_generator.format_prompt_tools_detection_description(func.name, func.description)
             description += "\n"
             trigger_instruction += self.prompt_generator.format_prompt_tools_detection_trigger(func.name, func.trigger_instruction)
             trigger_instruction += "\n"
+
+        if plugin.examples and "function_detection" in plugin.examples:
+            examples += plugin.examples["function_detection"]
+            examples += "\n"
+
         description = description.strip("\n")
         trigger_instruction = trigger_instruction.strip("\n")
-        prompt_detect_functions = self.prompt_generator.format_prompt_function_detection(description, trigger_instruction, message.content)
+        examples = examples.strip("\n")
+
+        prompt_detect_functions = self.prompt_generator.format_prompt_function_detection(description, trigger_instruction, message.content, examples)
 
         self.log.write("\n\n== prompt to detect functions\n")
         self.log.write(prompt_detect_functions)
@@ -149,7 +164,7 @@ class LightAgent:
                 return func
         return None
     
-    def extract_params_to_function(self, function: Function, message: Message, context: Context, metrics:dict) -> List[Parameter]:
+    def extract_params_to_function(self, plugin: Plugin, function: Function, message: Message, context: Context, metrics:dict) -> List[Parameter]:
         # given query and context, determine which parameters are relevant
         parameters = function.parameters
         if not parameters or len(parameters) == 0:
@@ -160,7 +175,11 @@ class LightAgent:
             parameters_prompts += self.prompt_generator.format_prompt_function_parameters_extraction_parameter(param.name, param.type, param.description)
             parameters_prompts += "\n"
         
-        prompt_extract_params = self.prompt_generator.format_prompt_function_parameters_extraction(function.name, function.description, parameters_prompts, message.content)
+        examples = ""
+        if plugin.examples and "parameters_extraction" in plugin.examples:
+            examples = plugin.examples["parameters_extraction"]
+
+        prompt_extract_params = self.prompt_generator.format_prompt_function_parameters_extraction(function.name, function.description, parameters_prompts, message.content, examples)
         self.log.write(f"\n\n== prompt to extract parameters to the function {function.name}\n")
         self.log.write(prompt_extract_params)
         self.log.write(f"\n\n== prompt to extract parameters to the function {function.name}\n")
@@ -340,7 +359,7 @@ class LightAgent:
             if not self.check_detected_function_results(context, plugin, function):
                 break
 
-            params = self.extract_params_to_function(function, message, context, metrics)
+            params = self.extract_params_to_function(plugin, function, message, context, metrics)
 
             parameters_to_execute, missing_required_parameters_to_execute = self.check_params_to_function(params)
             result = ""
