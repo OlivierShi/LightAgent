@@ -33,7 +33,7 @@ class MiniCPM2B(BaseLLM):
         response = self.llm("Hello, how are you?")
         print(f"{self.model_name} Warmup successful.")
 
-    def llm(self, query, temperature=0.1, top_p=0.8, stopping_criteria=None):
+    def llm(self, query, temperature=0.1, top_p=0.8, stopping_criteria=None, max_new_tokens=1024):
         if stopping_criteria is None:
             stopping_criteria = self.stopping_criteria_list_general
 
@@ -44,7 +44,7 @@ class MiniCPM2B(BaseLLM):
             role="assistant",
             temperature=temperature,
             top_p=top_p,
-            max_length=768,
+            max_new_tokens=max_new_tokens,
             pad_token_id=self.tokenizer.eos_token_id,
             stopping_criteria=stopping_criteria)
         torch.cuda.empty_cache()
@@ -52,5 +52,6 @@ class MiniCPM2B(BaseLLM):
 
     def generate(self, input, reasoning=True):
         stopping_criteria = self.stopping_criteria_list_general + self.stopping_criteria_list_strict if reasoning else self.stopping_criteria_list_general
-        return self.llm(input, stopping_criteria=stopping_criteria)
+        max_new_tokens = 20 if reasoning else 80
+        return self.llm(input, stopping_criteria=stopping_criteria, max_new_tokens=max_new_tokens)
     
