@@ -1,19 +1,19 @@
 {
     "name": "message_in_a_bottle",
     "description": "This plugin defines a set of tools to implement **Message In A Bottle** scenario. It helps people share/look for ideas, stories, and make friends across the world.",
-    "trigger_instruction": "\n  *When a user wants to retrieve a message bottle and to fetch a message bottle from the ocean, invoke `message_in_a_bottle`;\n  *When a user wants to send a message bottle and to create a message bottle and drop it into the ocean, invoke `message_in_a_bottle`;\n  *When a user wants to understand what is message in a bottle, how to use it, invoke `message_in_a_bottle`;",
+    "trigger_instruction": "\n  *When a user wants to retrieve a message bottle and to fetch a message bottle from the ocean, invoke {\"tool\":\"message_in_a_bottle\"};\n  *When a user wants to send a message bottle and to create a message bottle and drop it into the ocean, invoke {\"tool\":\"message_in_a_bottle\"};\n  *When a user wants to understand what is message in a bottle, how to use it, invoke {\"tool\":\"message_in_a_bottle\"};",
     "response_instruction": "I support Message-in-a-Bottle application. It helps user retrieve, send, reply to a message bottle.",
     "functions": [
         {
             "name": "retrieve_message_bottle",
             "description": "Retrieve a message bottle and fetch a message bottle from the ocean",
-            "trigger_instruction": "\n  *When a user wants to retrieve a message bottle and to fetch a message bottle from the ocean, invoke `retrieve_message_bottle`;",
+            "trigger_instruction": "\n  *When a user wants to retrieve a message bottle and to fetch a message bottle from the ocean, invoke {\"tool\":\"retrieve_message_bottle\"};",
             "response_instruction": "The message bottle is retrieved, and i should display the message to the user."
         },
         {
             "name": "send_message_bottle",
             "description": "Send a message bottle and create a message bottle",
-            "trigger_instruction": "\n  *When a user wants to send a message bottle and to create a message bottle and drop it into the ocean, invoke `send_message_bottle`;",
+            "trigger_instruction": "\n  *When a user wants to send a message bottle and to create a message bottle and drop it into the ocean, invoke {\"tool\":\"send_message_bottle\"};",
             "response_instruction": "The message bottle has been sent out successfully, and i shoud display the sent message to the user.",
             "parameters": [
                 {
@@ -27,7 +27,7 @@
         {
             "name": "introduction",
             "description": "Introduce what is message in a bottle, how to use it",
-            "trigger_instruction": "\n  *When a user wants to understand what is message in a bottle, how to use it, invoke `introduction`;",
+            "trigger_instruction": "\n  *When a user wants to understand what is message in a bottle, how to use it, invoke {\"tool\":\"introduction\"};",
             "response_instruction": "The introduction of message in a bottle has been got and i shoud display it to the user."
         }
     ]

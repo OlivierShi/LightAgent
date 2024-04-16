@@ -1,13 +1,13 @@
 {
     "name": "phone_assistant",
     "description": "The phone assistant is a versatile tool designed to facilitate a wide range of tasks on a user's phone.",
-    "trigger_instruction": "\n  *When a Phone user wants to query for calls, messaging, alarms, app management, music playback, weather checks, navigation, camera control, invoke `phone_assistant`;",
+    "trigger_instruction": "\n  *When a Phone user wants to query for calls, messaging, alarms, app management, music playback, weather checks, navigation, camera control, invoke {\"tool\":\"phone_assistant\"};",
     "response_instruction": "I support AI Phone Assistant application, including calls, messaging, alarms, app management, music playback, weather checks, navigation, camera control, etc.",
     "functions": [
         {
             "name": "place_call",
             "description": "Helps the user to place a phone call to a specified phone number or contact stored in the phone.",
-            "trigger_instruction": "\n  *When a user wants to place a phone call, invoke `place_call`;",
+            "trigger_instruction": "\n  *When a user wants to place a phone call, invoke {\"tool\":\"place_call\"};",
             "response_instruction": "I have placed a call to the specified phone number.",
             "parameters": [
                 {
@@ -21,7 +21,7 @@
         {
             "name": "send_sms",
             "description": "Sends an SMS message to a specified phone number with a user-defined message.",
-            "trigger_instruction": "\n  *When a user wants to send an SMS message, invoke `send_sms`;",
+            "trigger_instruction": "\n  *When a user wants to send an SMS message, invoke {\"tool\":\"send_sms\"};",
             "response_instruction": "I have sent the SMS message to the specified phone number.",
             "parameters": [
                 {
@@ -41,7 +41,7 @@
         {
             "name": "set_alarm",
             "description": "Sets an alarm for the user at a specified time.",
-            "trigger_instruction": "\n  *When a user wants to set an alarm, invoke `set_alarm`;",
+            "trigger_instruction": "\n  *When a user wants to set an alarm, invoke {\"tool\":\"set_alarm\"};",
             "response_instruction": "I have set the alarm for the specified time.",
             "parameters": [
                 {
@@ -55,7 +55,7 @@
         {
             "name": "create_reminder",
             "description": "Creates a reminder with a specified title, message, and time.",
-            "trigger_instruction": "\n  *When a user wants to create a reminder, invoke `create_reminder`;",
+            "trigger_instruction": "\n  *When a user wants to create a reminder, invoke {\"tool\":\"create_reminder\"};",
             "response_instruction": "I have created a reminder with the specified title, message, and time.",
             "parameters": [
                 {
@@ -81,7 +81,7 @@
         {
             "name": "open_app",
             "description": "Opens an application installed on the user's phone.",
-            "trigger_instruction": "\n  *When a user wants to open an app, invoke `open_app`;",
+            "trigger_instruction": "\n  *When a user wants to open an app, invoke {\"tool\":\"open_app\"};",
             "response_instruction": "I have opened the specified app.",
             "parameters": [
                 {
@@ -95,7 +95,7 @@
         {
             "name": "play_music",
             "description": "Plays music on the user's phone.",
-            "trigger_instruction": "\n  *When a user wants to play music, invoke `play_music`;",
+            "trigger_instruction": "\n  *When a user wants to play music, invoke {\"tool\":\"play_music\"};",
             "response_instruction": "I have started playing music.",
             "parameters": [
                 {

@@ -1,13 +1,13 @@
 {
     "name": "graphic",
     "description": "This plugin is to handle graphic related query.",
-    "trigger_instruction": "\n  *When user is asking for creating, generating, designing a graphic, invoke `graphic`;\n  *When user is asking for explaining, recognizing, describing a graphic, invoke `graphic`",
+    "trigger_instruction": "\n  *When user is asking for creating, generating, designing a graphic, invoke {\"tool\":\"graphic\"};\n  *When user is asking for explaining, recognizing, describing a graphic, invoke {\"tool\":\"graphic\"}",
     "response_instruction": "I am able to generate a graphic for a given query or describe a graphic for an image.",
     "functions": [
         {
             "name": "draw_graphic",
             "description": "Generate a graphic for a given query",
-            "trigger_instruction": "\n  *When user is asking for creating, generating, drawing, designing a graphic, invoke `graphic`;",
+            "trigger_instruction": "\n  *When user is asking for creating, generating, drawing, designing a graphic, invoke {\"tool\":\"draw_graphic\"};",
             "parameters": [
                 {
                     "name": "query",
@@ -20,7 +20,7 @@
         {
             "name": "describe_graphic",
             "description": "Describe a graphic for an image",
-            "trigger_instruction": "\n  *When user is asking for explaining, recognizing, describing a graphic, invoke `graphic`",
+            "trigger_instruction": "\n  *When user is asking for explaining, recognizing, describing a graphic, invoke {\"tool\":\"describe_graphic\"}",
             "response_instruction": "The description and caption results are listed, I need consider that to address user query.",
             "parameters": [
                 {
