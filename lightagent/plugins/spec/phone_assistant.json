@@ -1,7 +1,7 @@
 {
     "name": "phone_assistant",
     "description": "The phone assistant is a versatile tool designed to facilitate a wide range of tasks on a user's phone.",
-    "trigger_instruction": "\n  *When a Phone user wants to query for calls, messaging, alarms, app management, music playback, weather checks, navigation, camera control, invoke {\"tool\":\"phone_assistant\"};",
+    "trigger_instruction": "\n  *When a Phone user wants to place a phone call, to send an SMS message, to set an alarm, to create a reminder, to open an app, to play music, invoke {\"tool\":\"phone_assistant\"};",
     "response_instruction": "I support AI Phone Assistant application, including calls, messaging, alarms, app management, music playback, weather checks, navigation, camera control, etc.",
     "functions": [
         {
