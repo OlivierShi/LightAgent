@@ -1,6 +1,6 @@
 {
     "name": "generate_response",
     "description": "This plugin is to generate a response.",
-    "trigger_instruction": "\n  *When user wants to ask for what you can support, what's your capability and identification, invoke {\"tool\":\"generate_response\"};\n  *When user want to generate imaginative and innovative content such as poems, stories, invoke {\"tool\":\"generate_response\"};\n  *When none of plugins need to be triggered, invoke {\"tool\":\"generate_response\"};",
+    "trigger_instruction": "\n  *When user wants to ask for your capability and identification, to generate imaginative and innovative content such as poems, stories, invoke {\"tool\":\"generate_response\"};\n  *When none of plugins need to be triggered, invoke {\"tool\":\"generate_response\"};",
     "response_instruction": "I am capable of generating **imaginative and innovative content** such as poems, stories, code, and more using my own words and knowledge."
 }
