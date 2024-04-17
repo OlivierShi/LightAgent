@@ -99,7 +99,9 @@ class LightAgent:
 
         self.log.write(f"\n\n== response from LLM\n")
         self.log.write(response)
-        processed_plugin_name = Postprocessor.try_parse_json_from_llm(response)
+        processed_result = Postprocessor.try_parse_json_from_llm(response)
+        processed_plugin_name = processed_result.get("tool", None)
+
         for plugin in self.enabled_plugins + self.default_plugins:
             if processed_plugin_name == plugin.name:
                 self.log.write(f"== detected plugin: {plugin.name}\n")
@@ -156,7 +158,8 @@ class LightAgent:
 
         self.log.write(f"\n\n== response from LLM\n")
         self.log.write(response)
-        processed_function_name = Postprocessor.try_parse_json_from_llm(response)
+        processed_result = Postprocessor.try_parse_json_from_llm(response)
+        processed_function_name = processed_result.get("tool", None)
         for func in functions:
             if processed_function_name == func.name:
                 self.log.write(f"== detected function: {func.name}\n")
@@ -175,11 +178,13 @@ class LightAgent:
             parameters_prompts += self.prompt_generator.format_prompt_function_parameters_extraction_parameter(param.name, param.type, param.description)
             parameters_prompts += "\n"
         
+        parameters_format = self.prompt_generator.format_prompt_function_parameters_extraction_format(function)
+
         examples = ""
         if plugin.examples and "parameters_extraction" in plugin.examples:
             examples = plugin.examples["parameters_extraction"]
 
-        prompt_extract_params = self.prompt_generator.format_prompt_function_parameters_extraction(function.name, function.description, parameters_prompts, message.content, examples)
+        prompt_extract_params = self.prompt_generator.format_prompt_function_parameters_extraction(function.name, function.description, parameters_prompts, parameters_format, message.content, examples)
         self.log.write(f"\n\n== prompt to extract parameters to the function {function.name}\n")
         self.log.write(prompt_extract_params)
         self.log.write(f"\n\n== prompt to extract parameters to the function {function.name}\n")
@@ -189,8 +194,9 @@ class LightAgent:
         end_time = time.time()
         Helpers.metrics_helper(metrics, "perf", "extract_params_to_function", end_time - start_time)
         self.log.write(f"\n\n== response from LLM\n")
-        self.log.write(response)        
-        processed_params = json.loads(Postprocessor.postprocess_llm(response))
+        self.log.write(response)
+         
+        processed_params = Postprocessor.try_parse_json_from_llm(response)
         
         for k, v in processed_params.items():
             for param in parameters:

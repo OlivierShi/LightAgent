@@ -1,7 +1,8 @@
 from typing import List
-from models import UserProfile, Message, InnerToolInvokationResult, Plugin
+from models import UserProfile, Message, InnerToolInvokationResult, Plugin, Function
 from config import BaseConfig
 import os
+import json
 from datetime import datetime
 
 class PromptGenerator:
@@ -54,13 +55,21 @@ class PromptGenerator:
                 .replace("{type}", type)                     \
                 .replace("{description}", description)
     
-    def format_prompt_function_parameters_extraction(self, function_name: str, description: str, parameters: str, query: str, examples: str = None):
+    def format_prompt_function_parameters_extraction_format(self, function: Function):
+        required_parameters = [p for p in function.parameters if p.required]
+        format_parameters = {}
+        for p in required_parameters:
+            format_parameters[p.name] = f"<{p.description}>"
+        return json.dumps(format_parameters)
+    
+    def format_prompt_function_parameters_extraction(self, function_name: str, description: str, parameters: str, format: str, query: str, examples: str = None):
         if self._is_none_or_whitespace(examples):
             examples = ""
         return self.prompt_function_parameters_extraction  \
                 .replace("{function_name}", function_name) \
                 .replace("{description}", description)     \
                 .replace("{parameters}", parameters)       \
+                .replace("{format}", format)               \
                 .replace("{examples}", examples)           \
                 .replace("{query}", query)
        

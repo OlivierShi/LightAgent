@@ -1,9 +1,11 @@
 import json 
+import re
 
 class Postprocessor:
+    JSON_PATTERN = r'\{.*?\}'
 
     @staticmethod
-    def try_parse_json_from_llm(response: str):
+    def try_parse_json_from_llm(response: str) -> dict:
         """
         Try to parse the response as JSON.
         :param response: The response to parse.
@@ -12,13 +14,13 @@ class Postprocessor:
         response = Postprocessor.postprocess_llm(response)
 
         try:
-            js_str = json.loads(response)
-            if "tool" in js_str:
-                return js_str["tool"]
-            else:
-                return None
+            js = json.loads(response)
+            return js
         except json.JSONDecodeError:
-            return None
+            matches = re.findall(Postprocessor.JSON_PATTERN, response)
+            if len(matches) > 0:
+                return json.loads(matches[0])
+            return {}
         
     @staticmethod
     def postprocess_llm(response: str):

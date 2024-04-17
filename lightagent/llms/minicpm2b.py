@@ -17,7 +17,7 @@ class EosListStoppingCriteria(StoppingCriteria):
         return self.eos_sequence in last_ids
     
 class MiniCPM2B(BaseLLM):
-    def __init__(self, model_name="minicpm2b", general_stops=["<|im_end|>", "<|im_start|>", "###"], strict_stops=["\n\n",]):
+    def __init__(self, model_name="minicpm2b", general_stops=["LightAgent: ", "<user>", "Responding ended"], strict_stops=["\n\n",]):
         self.model_name = model_name
         path = 'openbmb/MiniCPM-2B-dpo-fp16'
         self.tokenizer = AutoTokenizer.from_pretrained(path, cache_dir=os.path.join(BaseConfig.BASE_DIR, "res/models/"))

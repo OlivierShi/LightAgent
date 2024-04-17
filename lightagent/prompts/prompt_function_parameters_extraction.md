@@ -8,6 +8,8 @@ def {function_name}:
 {parameters}
     """
 ```
+Output Format:
+{format}
 
 The output is in the form of a dictionary with the parameter name as the key and the extracted value as the value. If a parameter is not found, it will be set to null.
 
