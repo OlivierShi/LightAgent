@@ -1,0 +1,234 @@
+{
+    "name": "car_assistant",
+    "description": "The car assistant is a versatile tool designed to facilitate a wide range of tasks on a car to improve the driving experience.",
+    "trigger_instruction": "\n  *When a user wants to place a phone call, invoke {\"tool\":\"phone_assistant\"};\n  *When a user wants to send an SMS message, invoke {\"tool\":\"phone_assistant\"};\n  *When a user wants to set an alarm, invoke {\"tool\":\"phone_assistant\"};\n  *When a user wants to create a reminder, invoke {\"tool\":\"phone_assistant\"};\n  *When a user wants to open an app, invoke {\"tool\":\"phone_assistant\"};\n  *When a user wants to play music, invoke {\"tool\":\"phone_assistant\"};",
+    "response_instruction": "I support AI Phone Assistant application, including calls, messaging, alarms, app management, music playback, weather checks, navigation, camera control, etc.",
+    "functions": [
+        {
+            "name": "navigate_to",
+            "description": "Helps the user to navigate to a specified location using GPS.",
+            "trigger_instruction": "\n  *When a user wants to navigate to a location, invoke {\"tool\":\"navigate_to\"};",
+            "response_instruction": "I have placed a call to the specified phone number.",
+            "parameters": [
+                {
+                    "name": "phone_number",
+                    "type": "string",
+                    "required": true,
+                    "description": "The phone number to call"
+                }
+            ]
+        },
+        {
+            "name": "send_sms",
+            "description": "Sends an SMS message to a specified phone number with a user-defined message.",
+            "trigger_instruction": "\n  *When a user wants to send an SMS message, invoke {\"tool\":\"send_sms\"};",
+            "response_instruction": "I have sent the SMS message to the specified phone number.",
+            "parameters": [
+                {
+                    "name": "phone_number",
+                    "type": "string",
+                    "required": false,
+                    "description": "The phone number to send the message to"
+                },
+                {
+                    "name": "message",
+                    "type": "string",
+                    "required": false,
+                    "description": "The message to send"
+                }
+            ]
+        },
+        {
+            "name": "set_alarm",
+            "description": "Sets an alarm for the user at a specified time.",
+            "trigger_instruction": "\n  *When a user wants to set an alarm, invoke {\"tool\":\"set_alarm\"};",
+            "response_instruction": "I have set the alarm for the specified time.",
+            "parameters": [
+                {
+                    "name": "time",
+                    "type": "string",
+                    "required": true,
+                    "description": "The time to set the alarm for"
+                }
+            ]
+        },
+        {
+            "name": "create_reminder",
+            "description": "Creates a reminder with a specified title, message, and time.",
+            "trigger_instruction": "\n  *When a user wants to create a reminder, invoke {\"tool\":\"create_reminder\"};",
+            "response_instruction": "I have created a reminder with the specified title, message, and time.",
+            "parameters": [
+                {
+                    "name": "title",
+                    "type": "string",
+                    "required": false,
+                    "description": "The title of the reminder"
+                },
+                {
+                    "name": "message",
+                    "type": "string",
+                    "required": false,
+                    "description": "The message of the reminder"
+                },
+                {
+                    "name": "time",
+                    "type": "string",
+                    "required": true,
+                    "description": "The time of the reminder"
+                }
+            ]
+        },
+        {
+            "name": "open_app",
+            "description": "Opens an application installed on the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to open an app, invoke {\"tool\":\"open_app\"};",
+            "response_instruction": "I have opened the specified app.",
+            "parameters": [
+                {
+                    "name": "app_name",
+                    "type": "string",
+                    "required": true,
+                    "description": "The name of the app to open"
+                }
+            ]
+        },
+        {
+            "name": "play_music",
+            "description": "Plays music on the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to play music, invoke {\"tool\":\"play_music\"};",
+            "response_instruction": "I have started playing music.",
+            "parameters": [
+                {
+                    "name": "query",
+                    "type": "string",
+                    "required": false,
+                    "description": "A search query to find the music to play, such as a song title, artist name, or playlist name."
+                }
+            ]
+        },
+        {
+            "name": "adjust_volume",
+            "description": "Adjusts the volume of the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to adjust the volume, invoke {\"tool\":\"adjust_volume\"};",
+            "response_instruction": "I have adjusted the volume of the phone.",
+            "parameters": [
+                {
+                    "name": "level",
+                    "type": "integer",
+                    "required": false,
+                    "description": "The level of brightness to set, ranging from 0 to 100.",
+                    "example": 50
+                },
+                {
+                    "name": "rate",
+                    "type": "float",
+                    "required": false,
+                    "description": "The rate of brightness adjustment, ranging from 0 to 1.",
+                    "example": 0.5
+                },                
+                {
+                    "name": "direction",
+                    "type": "string",
+                    "required": true,
+                    "description": "Direction of the brightness adjustment, value should be \"increase\" or \"decrease\".",
+                    "example": "increase"
+                }
+            ]
+        },
+        {
+            "name": "adjust_brightness",
+            "description": "Adjusts the brightness of the user's phone screen.",
+            "trigger_instruction": "\n  *When a user wants to adjust the brightness, invoke {\"tool\":\"adjust_brightness\"};",
+            "response_instruction": "I have adjusted the brightness of the phone screen.",
+            "parameters": [
+                {
+                    "name": "level",
+                    "type": "integer",
+                    "required": false,
+                    "description": "The level of brightness to set, ranging from 0 to 100.",
+                    "example": 50
+                },
+                {
+                    "name": "rate",
+                    "type": "float",
+                    "required": false,
+                    "description": "The rate of brightness adjustment, ranging from 0 to 1.",
+                    "example": 0.5
+                },
+                {
+                    "name": "direction",
+                    "type": "string",
+                    "required": true,
+                    "description": "Direction of the brightness adjustment, value should be \"increase\" or \"decrease\".",
+                    "example": "increase"
+                }
+            ]
+        },
+        {
+            "name": "toggle_wifi",
+            "description": "Turn on or off the Wi-Fi connection on the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to turn on or off Wi-Fi, invoke {\"tool\":\"toggle_wifi\"};",
+            "response_instruction": "I have toggled the Wi-Fi connection on the phone.",
+            "parameters": [
+                {
+                    "name": "state",
+                    "type": "boolean",
+                    "required": true,
+                    "description": "The desired state of the Wi-Fi connection, either true (on) or false (off).",
+                    "example": true
+                }
+            ]
+        },
+        {
+            "name": "toggle_bluetooth",
+            "description": "Turn on or off the Bluetooth connection on the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to turn on or off Bluetooth, invoke {\"tool\":\"toggle_bluetooth\"};",
+            "response_instruction": "I have toggled the Bluetooth connection on the phone.",
+            "parameters": [
+                {
+                    "name": "state",
+                    "type": "boolean",
+                    "required": true,
+                    "description": "The desired state of the Bluetooth connection, either true (on) or false (off).",
+                    "example": true
+                }
+            ]
+        },
+        {
+            "name": "toggle_dnd",
+            "description": "Turn on or off the Do Not Disturb mode on the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to turn on or off Do Not Disturb mode, invoke {\"tool\":\"toggle_dnd\"};",
+            "response_instruction": "I have toggled the Do Not Disturb mode on the phone.",
+            "parameters": [
+                {
+                    "name": "state",
+                    "type": "boolean",
+                    "required": true,
+                    "description": "The desired state of the Do Not Disturb mode, either true (on) or false (off).",
+                    "example": true
+                }
+            ]
+        },
+        {
+            "name": "toggle_power_saving",
+            "description": "Turn on or off the Power Saving mode on the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to turn on or off Power Saving mode, invoke {\"tool\":\"toggle_power_saving\"};",
+            "response_instruction": "I have toggled the Power Saving mode on the phone.",
+            "parameters": [
+                {
+                    "name": "state",
+                    "type": "boolean",
+                    "required": true,
+                    "description": "The desired state of the Power Saving mode, either true (on) or false (off).",
+                    "example": true
+                }
+            ]
+        }
+    ],
+    "examples": {
+        "tool_detection": "<assistant>Detection started.\n## Conversation History\n<user>Do you hate me?\n<assistant>Sorry, i don't understand and cannot help with that.\n<user>please reminder me on tomorrow 9 PM.\n## Completed Inner Tool Invocation Results\n\n## Predicting Tool Invocation Response\n<user>please reminder me on tomorrow 9 PM.\n<assistant>{\"tool\":\"phone_assistant\"}\n<assistant>Thoughts: I must invoke {\"tool\":\"phone_assistant\"} to assist users on their phone.\n<assistant>Detection ended.",
+        "function_detection": "<user>please reminder me on tomorrow 9 PM.\n<assistant>{\"tool\":\"create_reminder\"}\n<assistant>Thoughts: I must invoke {\"tool\":\"create_reminder\"} to assist in remindering user on tomorrow 9pm.",
+        "parameters_extraction": "<user>please reminder me on tomorrow 9 PM.\n<assistant>{\"time\": \"tomorrow 21:00:00\"}\n<assistant>Thoughts: User is asking for create reminder on tomorrow 9PM, the parameter is {\"time\": \"tomorrow 21:00:00\"}",
+        "response": ""
+    }
+}
