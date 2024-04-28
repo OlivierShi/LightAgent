@@ -105,6 +105,124 @@
                     "description": "A search query to find the music to play, such as a song title, artist name, or playlist name."
                 }
             ]
+        },
+        {
+            "name": "adjust_volume",
+            "description": "Adjusts the volume of the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to adjust the volume, invoke {\"tool\":\"adjust_volume\"};",
+            "response_instruction": "I have adjusted the volume of the phone.",
+            "parameters": [
+                {
+                    "name": "level",
+                    "type": "integer",
+                    "required": false,
+                    "description": "The level of brightness to set, ranging from 0 to 100.",
+                    "example": 50
+                },
+                {
+                    "name": "rate",
+                    "type": "float",
+                    "required": false,
+                    "description": "The rate of brightness adjustment, ranging from 0 to 1.",
+                    "example": 0.5
+                },                
+                {
+                    "name": "direction",
+                    "type": "string",
+                    "required": true,
+                    "description": "Direction of the brightness adjustment, value should be \"increase\" or \"decrease\".",
+                    "example": "increase"
+                }
+            ]
+        },
+        {
+            "name": "adjust_brightness",
+            "description": "Adjusts the brightness of the user's phone screen.",
+            "trigger_instruction": "\n  *When a user wants to adjust the brightness, invoke {\"tool\":\"adjust_brightness\"};",
+            "response_instruction": "I have adjusted the brightness of the phone screen.",
+            "parameters": [
+                {
+                    "name": "level",
+                    "type": "integer",
+                    "required": false,
+                    "description": "The level of brightness to set, ranging from 0 to 100.",
+                    "example": 50
+                },
+                {
+                    "name": "rate",
+                    "type": "float",
+                    "required": false,
+                    "description": "The rate of brightness adjustment, ranging from 0 to 1.",
+                    "example": 0.5
+                },
+                {
+                    "name": "direction",
+                    "type": "string",
+                    "required": true,
+                    "description": "Direction of the brightness adjustment, value should be \"increase\" or \"decrease\".",
+                    "example": "increase"
+                }
+            ]
+        },
+        {
+            "name": "toggle_wifi",
+            "description": "Turn on or off the Wi-Fi connection on the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to turn on or off Wi-Fi, invoke {\"tool\":\"toggle_wifi\"};",
+            "response_instruction": "I have toggled the Wi-Fi connection on the phone.",
+            "parameters": [
+                {
+                    "name": "state",
+                    "type": "boolean",
+                    "required": true,
+                    "description": "The desired state of the Wi-Fi connection, either true (on) or false (off).",
+                    "example": true
+                }
+            ]
+        },
+        {
+            "name": "toggle_bluetooth",
+            "description": "Turn on or off the Bluetooth connection on the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to turn on or off Bluetooth, invoke {\"tool\":\"toggle_bluetooth\"};",
+            "response_instruction": "I have toggled the Bluetooth connection on the phone.",
+            "parameters": [
+                {
+                    "name": "state",
+                    "type": "boolean",
+                    "required": true,
+                    "description": "The desired state of the Bluetooth connection, either true (on) or false (off).",
+                    "example": true
+                }
+            ]
+        },
+        {
+            "name": "toggle_dnd",
+            "description": "Turn on or off the Do Not Disturb mode on the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to turn on or off Do Not Disturb mode, invoke {\"tool\":\"toggle_dnd\"};",
+            "response_instruction": "I have toggled the Do Not Disturb mode on the phone.",
+            "parameters": [
+                {
+                    "name": "state",
+                    "type": "boolean",
+                    "required": true,
+                    "description": "The desired state of the Do Not Disturb mode, either true (on) or false (off).",
+                    "example": true
+                }
+            ]
+        },
+        {
+            "name": "toggle_power_saving",
+            "description": "Turn on or off the Power Saving mode on the user's phone.",
+            "trigger_instruction": "\n  *When a user wants to turn on or off Power Saving mode, invoke {\"tool\":\"toggle_power_saving\"};",
+            "response_instruction": "I have toggled the Power Saving mode on the phone.",
+            "parameters": [
+                {
+                    "name": "state",
+                    "type": "boolean",
+                    "required": true,
+                    "description": "The desired state of the Power Saving mode, either true (on) or false (off).",
+                    "example": true
+                }
+            ]
         }
     ],
     "examples": {

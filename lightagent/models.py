@@ -2,16 +2,17 @@ from typing import List
 from datetime import datetime
 
 class Parameter():
-    def __init__(self, name, description, type, required, default = None, value:dict = {}):
+    def __init__(self, name, description, type, required, example = None, default = None, value:dict = {}):
         self.name = name
         self.description = description
         self.type = type
         self.required = required
+        self.example = example
         self.default = default
         self.value = value
 
     def __str__(self) -> str:
-        return f"Parameter: {self.name}, {self.description}, {self.type}, {self.required}, {self.default}, {self.value}"
+        return f"Parameter: {self.name}, {self.description}, {self.type}, {self.required}, {self.example}, {self.default}, {self.value}"
 
     @staticmethod
     def from_json(data):
@@ -19,8 +20,9 @@ class Parameter():
         description = data.get("description", "")
         type = data.get("type", "")
         required = data.get("required", False)
+        example = data.get("example", None)
         value = data.get("value", {})
-        return Parameter(name, description, type, required, value)
+        return Parameter(name, description, type, required, example=example, value=value)
 
 class Function:
     def __init__(self, name,

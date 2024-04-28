@@ -35,10 +35,7 @@ class Helpers:
                     else:
                         reasoning_perf += sum(values)
                         reasoning_cnt += len(values)
-                    print(f"\tSegment: {segment_name}")
-                    print(f"\t\tAverage: {sum(values) / len(values)}")
-                    print(f"\t\tCount: {len(values)}")
-                print(f"\tReasoning total: {reasoning_perf}\tReasoning avg: {reasoning_perf/reasoning_cnt}\n\tResponding total: {responding_perf}\n\tTool Executions: {executions}\n")
+                print(f"\tReasoning total: {reasoning_perf}\tResponding total: {responding_perf}")
             
             if metric_name == "log":
                 print(f"Metric: {metric_name}")

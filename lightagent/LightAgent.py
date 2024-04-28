@@ -175,7 +175,7 @@ class LightAgent:
 
         parameters_prompts = ""
         for param in parameters:
-            parameters_prompts += self.prompt_generator.format_prompt_function_parameters_extraction_parameter(param.name, param.type, param.description)
+            parameters_prompts += self.prompt_generator.format_prompt_function_parameters_extraction_parameter(param.name, param.type, param.required, param.description)
             parameters_prompts += "\n"
         
         parameters_format = self.prompt_generator.format_prompt_function_parameters_extraction_format(function)

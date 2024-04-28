@@ -49,18 +49,24 @@ class PromptGenerator:
                 .replace("{examples}", examples)                       \
                 .replace("{query}", query)
         
-    def format_prompt_function_parameters_extraction_parameter(self, name: str, type: str, description: str):
-        return """        {name} ({type}): {description}.""" \
-                .replace("{name}", name)                     \
-                .replace("{type}", type)                     \
+    def format_prompt_function_parameters_extraction_parameter(self, name: str, type: str, required: bool, description: str):
+        required_str = "required" if required else "optional"
+        return """        {name} ({type}, {required}): {description}.""" \
+                .replace("{name}", name)                                 \
+                .replace("{type}", type)                                 \
+                .replace("{required}", required_str)                     \
                 .replace("{description}", description)
     
     def format_prompt_function_parameters_extraction_format(self, function: Function):
-        required_parameters = [p for p in function.parameters if p.required]
-        format_parameters = {}
-        for p in required_parameters:
-            format_parameters[p.name] = f"<{p.description}>"
-        return json.dumps(format_parameters)
+        parameters_format = ""
+
+        for p in function.parameters:
+            if "str" in p.type.lower():
+                parameters_format += f"\"{p.name}\": \"{p.default}\"" if p.default else f"\"{p.name}\": \"<({p.type}), {p.description}>\""
+            else:
+                parameters_format += f"\"{p.name}\": {p.default}" if p.default else f"\"{p.name}\": <({p.type}), {p.description}>"
+
+        return "{" + parameters_format + "}"
     
     def format_prompt_function_parameters_extraction(self, function_name: str, description: str, parameters: str, format: str, query: str, examples: str = None):
         if self._is_none_or_whitespace(examples):

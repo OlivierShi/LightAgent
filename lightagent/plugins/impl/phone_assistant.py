@@ -34,3 +34,37 @@ class PhoneAssistant:
     def play_music(self, query: str):
         return f"I have started playing music for {query}."
     
+    def adjust_volume(self, level = None, rate = None, direction: str = None):
+
+        if level is not None:
+            return f"I have adjusted the volume to {level}."
+        
+        if rate is not None:
+            return f"I have adjusted {direction} the volume by {rate*100}%."
+        
+        if direction is not None:
+            return f"I have adjusted to {direction} the volume by 20%."
+        
+    def adjust_brightness(self, level = None, rate = None, direction: str = None):
+
+        if level is not None:
+            return f"I have adjusted the brightness to {level}."
+        
+        if rate is not None:
+            return f"I have adjusted {direction} the brightness by {rate*100}%."
+        
+        if direction is not None:
+            return f"I have adjusted to {direction} the brightness by 20%."
+        
+    def toggle_wifi(self, state: bool):
+        return f"I have turned the WiFi {'on' if state else 'off'}."
+    
+    def toggle_bluetooth(self, state: bool):
+        return f"I have turned the Bluetooth {'on' if state else 'off'}."
+    
+    def toggle_dnd(self, state: bool):
+        return f"I have turned the Do Not Disturb mode {'on' if state else 'off'}."
+    
+    def toggle_power_saving(self, state: bool):
+        return f"I have turned the power saving mode {'on' if state else 'off'}."
+    
