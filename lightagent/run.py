@@ -32,7 +32,7 @@ while True:
     if query == "exit":
         break
 
-    message = Message(msg_id, query, datetime.now(), conv_id,  ["web_search", "phone_assistant"])
+    message = Message(msg_id, query, datetime.now(), conv_id,  ["web_search", "car_assistant"])
     
     response, metrics = agent.chat(message)
     print(f"LightAgent: {response}")
