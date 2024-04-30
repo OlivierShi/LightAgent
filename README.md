@@ -17,14 +17,15 @@ LightAgent is a framework for developing applications powered by mini LLM.
 
 # good cases
 
+## LightAgent with MiniCPM-2B 
 - User: 你是谁
 - LightAgent: I am LightAgent, an AI assistant designed to help users with their queries and tasks. I am capable of providing information, answering questions, and assisting with various tasks. I am here to make your life easier and more enjoyable. If you have any questions or need assistance, please feel free to ask.
 
 - User: 北京今天出门要带伞吗
-LightAgent: Based on the information provided, it is not necessary to bring an umbrella in Beijing today. However, it is always a good idea to check the weather forecast before heading out. If the weather is expected to change or become rainy, it might be a good idea to bring an umbrella just in case.
+- LightAgent: Based on the information provided, it is not necessary to bring an umbrella in Beijing today. However, it is always a good idea to check the weather forecast before heading out. If the weather is expected to change or become rainy, it might be a good idea to bring an umbrella just in case.
 
 - User: 奥巴马能赢得2024年美国大选吗
-LightAgent: Hello, I'm LightAgent. I'm sorry for the confusion, but I cannot provide real-time information or predictions. However, I can tell you that Barack Obama, a former U.S. President, is a well-known political figure. As of my last update, he is not a current candidate for the 2024 U.S. Presidential election.
+- LightAgent: Hello, I'm LightAgent. I'm sorry for the confusion, but I cannot provide real-time information or predictions. However, I can tell you that Barack Obama, a former U.S. President, is a well-known political figure. As of my last update, he is not a current candidate for the 2024 U.S. Presidential election.
 
 - User: 金字旁加一个川读什么音
-LightAgent: 金字旁加一个川的读音是 chuàn。
+- LightAgent: 金字旁加一个川的读音是 chuàn。
