@@ -17,6 +17,11 @@ def test_search_news():
     ws = WebSearch()
     print(ws.search_news("今天seattle天气"))
 
+def test_google_search_api():
+    from lightagent.plugins.impl.web_search import google_search_api
+    print(google_search_api("what's the weather in Seattle?"))
+
+
 def test_search_wiki():
     from lightagent.plugins.impl.web_search import WebSearch
     ws = WebSearch()
@@ -125,3 +130,4 @@ def test_minicpm2b():
 # test_minicpm2b()
 # test_search_news()
 # test_search_wiki()
+test_google_search_api()

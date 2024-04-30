@@ -6,7 +6,23 @@ import requests
 import urllib.parse
 import asyncio
 import concurrent.futures
+from config import BaseConfig
+from googleapiclient.discovery import build
 
+def google_search_api(query: str, num=4) -> List[str]:
+    service = build("customsearch", "v1", developerKey=BaseConfig.google_search_api_key)
+    res = service.cse().list(q=query, cx=BaseConfig.google_search_cse_id, num=num).execute()
+
+    print(res['items'])
+    url = res['items'][0]["link"]
+
+    res = requests.get(url)
+    if res.status_code != 200:
+        raise Exception(f"Failed to get search results from google. Status code: {res.status_code}")
+    html_content = res.content
+    soup = BeautifulSoup(html_content, 'html.parser')
+    text = soup.get_text(separator=' ', strip=True)
+    return text
 
 def google_search(query: str) -> str:
     headers = {

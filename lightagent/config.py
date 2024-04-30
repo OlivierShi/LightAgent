@@ -11,3 +11,5 @@ class BaseConfig():
     openai_api_version = os.getenv('openai_api_version')
     openai_api_model = os.getenv('openai_api_model')
 
+    google_search_api_key = os.getenv('google_api_key')
+    google_search_cse_id = os.getenv('google_cse_id')
