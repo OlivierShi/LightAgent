@@ -5,14 +5,14 @@ LightAgent is a framework for developing applications powered by mini LLM.
 # todo:
 1. responding prompt, exclude the plugin instructions that are not triggered. &#9745;
 2. add metrics to log the latency. &#9745;
-3. add assistant plugin.
+3. add assistant plugin. &#9745;
 4. reduce the tokens of the conversation_history
-5. fix bugs.
+5. fix bugs. &#9745;
 6. add warmup &#9745;
 7. improve web search api
-9. add stop tokens
-10. fix json format
-11. improve extraction prompt
+9. add stop tokens &#9745;
+10. fix json format &#9745;
+11. improve extraction prompt &#9745;
 
 
 # good cases
