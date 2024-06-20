@@ -31,3 +31,13 @@ LightAgent is a framework for developing applications powered by mini LLM.
 
 - User: 金字旁加一个川读什么音
 - LightAgent: 金字旁加一个川的读音是 chuàn。
+
+## LightAgent with Phi-3B-Int4
+- User: 你是谁
+- LightAgent: This is LightAgent, ready to assist you! 😊
+
+- User: Do I need to bring an umbrella when going out in Seattle today?
+- LightAgent: Seattle's unspoken rules suggest that umbrellas are generally not recommended unless it's torrential rain. The Seattle weather forecast for today is 26°C.
+
+- User: Can Obama win the 2024 US election?
+- LightAgent: As an AI, I don't predict political outcomes. However, I can provide information on the current political landscape and election processes.
