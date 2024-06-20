@@ -13,6 +13,8 @@ LightAgent is a framework for developing applications powered by mini LLM.
 9. add stop tokens &#9745;
 10. fix json format &#9745;
 11. improve extraction prompt &#9745;
+12. add conntent summarization tool with LLM
+13. add phi3-int4 evaluation
 
 
 # good cases
