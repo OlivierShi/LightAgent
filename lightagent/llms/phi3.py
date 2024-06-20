@@ -12,7 +12,7 @@ class Phi3(BaseLLM):
 
     def __init__(self):
         self.model_name = "phi3-mini-int4"
-        path = os.path.join(BaseConfig.BASE_DIR, "res/cpu_and_mobile/cpu-int4-rtn-block-32-acc-level-4")
+        path = os.path.join(BaseConfig.BASE_DIR, "res/models/cpu-int4-rtn-block-32-acc-level-4")
         self.model = og.Model(path)
         print("Model loaded")
         self.tokenizer = og.Tokenizer(self.model)

@@ -5,7 +5,7 @@ from prompt_generator import PromptGenerator
 from conversation_manager import ConversationManager
 from storage.sqlite import SQLiteStorage    
 from models import Message
-from llms import GPT35
+from llms import GPT35, Phi3
 from plugins import PluginRunner
 from LightAgent import LightAgent
 from helpers import Helpers
@@ -14,7 +14,7 @@ if os.path.exists("run-sqlite.db"):
     os.remove("run-sqlite.db")
 db = SQLiteStorage("run-sqlite.db")
 cm = ConversationManager(db)
-agent = LightAgent(PromptGenerator(), GPT35("gpt3.5"), cm, PluginRunner())
+agent = LightAgent(PromptGenerator(), Phi3(), cm, PluginRunner())
 
 
 query = ""
