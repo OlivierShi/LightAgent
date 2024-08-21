@@ -8,7 +8,7 @@ from models import Message
 from llms import GPT35, Phi3
 from plugins import PluginRunner
 from LightAgent import LightAgent
-from helpers import Helpers
+from utils.log_helpers import LogHelpers
 
 if os.path.exists("run-sqlite.db"):
     os.remove("run-sqlite.db")
@@ -36,5 +36,8 @@ while True:
     
     response, metrics = agent.chat(message)
     print(f"LightAgent: {response}")
-    Helpers.metrics_printer(metrics)
+    LogHelpers.metrics_printer(metrics)
+
+    LogHelpers.details_logger(metrics, f"log_details_{message.id}.log")
+    
     print("=" * 100)

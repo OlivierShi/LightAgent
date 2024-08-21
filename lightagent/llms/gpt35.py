@@ -19,7 +19,7 @@ class GPT35(BaseLLM):
         response = self.generate("Hello, how are you?")
         print(f"{self.model_name} Warmup successful.")
 
-    def generate(self, input, reasoning=True):
+    def generate(self, input, reasoning=True, postprocessors=[]):
         stops = ["\n\n", self.role_system] if reasoning else [self.role_system]
         input = input.replace("<user>", self.role_user).replace("<assistant>", self.role_system)
 

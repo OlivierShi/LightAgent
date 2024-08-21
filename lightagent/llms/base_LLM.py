@@ -10,7 +10,7 @@ class BaseLLM(ABC):
         pass
 
     @abstractmethod
-    def generate(self, input, reasoning=True):
+    def generate(self, input, reasoning=True, postprocessors=[]):
         """
         Generate a response given an input.
         :param input: The input to the model.
