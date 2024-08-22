@@ -50,7 +50,7 @@ class MiniCPM2B(BaseLLM):
         torch.cuda.empty_cache()
         return responds
 
-    def generate(self, input, reasoning=True, postprocessors=[]):
+    def generate(self, input, reasoning=True):
         stopping_criteria = self.stopping_criteria_list_general + self.stopping_criteria_list_strict if reasoning else self.stopping_criteria_list_general
         max_new_tokens = 20 if reasoning else 80
         return self.llm(input, stopping_criteria=stopping_criteria, max_new_tokens=max_new_tokens)

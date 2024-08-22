@@ -59,6 +59,6 @@ class Phi3(BaseLLM):
 
         return result
 
-    def generate(self, input, reasoning=True, postprocessors=[]):
+    def generate(self, input, reasoning=True):
         max_new_tokens = 30 if reasoning else 80
         return self.llm(input, max_new_tokens=max_new_tokens)

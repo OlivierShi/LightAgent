@@ -8,7 +8,7 @@ class EchoLLM(BaseLLM):
         """
         pass
 
-    def generate(self, input, reasoning=True, postprocessors=[]):
+    def generate(self, input, reasoning=True):
         """
         Generate a response given an input.
         :param input: The input to the model.
