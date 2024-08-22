@@ -1,7 +1,7 @@
 import json 
 import re
 
-class Postprocessor:
+class LLMPostprocessor:
     JSON_PATTERN = r'\{.*?\}'
 
     @staticmethod
@@ -11,13 +11,13 @@ class Postprocessor:
         :param response: The response to parse.
         :return: The parsed JSON object or None if parsing fails.
         """
-        response = Postprocessor.postprocess_llm(response)
+        response = LLMPostprocessor.postprocess_llm(response)
 
         try:
             js = json.loads(response)
             return js
         except json.JSONDecodeError:
-            matches = re.findall(Postprocessor.JSON_PATTERN, response)
+            matches = re.findall(LLMPostprocessor.JSON_PATTERN, response)
             if len(matches) > 0:
                 return json.loads(matches[0])
             return {}
@@ -30,8 +30,8 @@ class Postprocessor:
         :return: The post-processed response.
         """
         # Strip the response
-        response = Postprocessor.__remove_stop_tokens(response)
-        response = Postprocessor.__strip_response(response)
+        response = LLMPostprocessor.__remove_stop_tokens(response)
+        response = LLMPostprocessor.__strip_response(response)
         return response
 
     def __strip_response(response: str, chars_to_remove: list = [' ', "'", '"', '`']):

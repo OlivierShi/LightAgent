@@ -6,10 +6,10 @@ from prompt_generator import PromptGenerator
 from models import Plugin, Message, Function, Parameter, Context, UserProfile, InnerToolInvokationResult
 from llms import BaseLLM
 from plugins import PluginRunner
-from postprocessor import Postprocessor
 from conversation_manager import ConversationManager
 from config import BaseConfig
-from helpers import Helpers
+from utils.log_helpers import LogHelpers
+from utils.llm_postprocessor import LLMPostprocessor
 
 ASK_FOR_USER_INPUT = "ASK_FOR_USER_INPUT"
 
@@ -87,25 +87,19 @@ class LightAgent:
         
         prompt_detect_plugins = self.prompt_generator.format_prompt_tools_detection(plugins_description, plugins_trigger, prompt_conversation_history, prompt_inner_tool_invokation_results, query, examples)
 
-        self.log.write("\n\n== prompt to detect plugin\n")
-        self.log.write(prompt_detect_plugins)
-        self.log.write("\n\n== prompt to detect plugin\n")
-        self.log.write(prompt_detect_plugins)
         start_time = time.time()
         response = self.llm.generate(prompt_detect_plugins, reasoning=True)
         end_time = time.time()
         
-        Helpers.metrics_helper(metrics, "perf", "detect_plugin", end_time - start_time)
+        LogHelpers.metrics_helper(metrics, "perf", "detect_plugin", end_time - start_time)
 
-        self.log.write(f"\n\n== response from LLM\n")
-        self.log.write(response)
-        processed_result = Postprocessor.try_parse_json_from_llm(response)
+        processed_result = LLMPostprocessor.try_parse_json_from_llm(response)
         processed_plugin_name = processed_result.get("tool", None)
 
         for plugin in self.enabled_plugins + self.default_plugins:
             if processed_plugin_name == plugin.name:
-                self.log.write(f"== detected plugin: {plugin.name}\n")
-                Helpers.metrics_log_helper(metrics, "log", f"detect_plugin::{plugin.name}", end_time - start_time)
+                LogHelpers.metrics_log_helper(metrics, "details", f"\n\n== prompt to detect plugin\n{prompt_detect_plugins}\n== response from LLM\n{response}\n== detected plugin: {plugin.name}\n", end_time - start_time)
+                LogHelpers.metrics_log_helper(metrics, "log", f"detect_plugin::{plugin.name}", end_time - start_time)
                 return plugin
         return None
 
@@ -147,23 +141,17 @@ class LightAgent:
 
         prompt_detect_functions = self.prompt_generator.format_prompt_function_detection(description, trigger_instruction, message.content, examples)
 
-        self.log.write("\n\n== prompt to detect functions\n")
-        self.log.write(prompt_detect_functions)
-        self.log.write("\n\n== prompt to detect functions\n")
-        self.log.write(prompt_detect_functions)
         start_time = time.time()
         response = self.llm.generate(prompt_detect_functions, reasoning=True)
         end_time = time.time()
-        Helpers.metrics_helper(metrics, "perf", "detect_function", end_time - start_time)
+        LogHelpers.metrics_helper(metrics, "perf", "detect_function", end_time - start_time)
 
-        self.log.write(f"\n\n== response from LLM\n")
-        self.log.write(response)
-        processed_result = Postprocessor.try_parse_json_from_llm(response)
+        processed_result = LLMPostprocessor.try_parse_json_from_llm(response)
         processed_function_name = processed_result.get("tool", None)
         for func in functions:
             if processed_function_name == func.name:
-                self.log.write(f"== detected function: {func.name}\n")
-                Helpers.metrics_log_helper(metrics, "log", f"detect_function::{func.name}", end_time - start_time)
+                LogHelpers.metrics_log_helper(metrics, "details", f"\n\n== prompt to detect function\n{prompt_detect_functions}\n== response from LLM\n{response}\n== detected function: {func.name}\n", end_time - start_time)
+                LogHelpers.metrics_log_helper(metrics, "log", f"detect_function::{func.name}", end_time - start_time)
                 return func
         return None
     
@@ -185,25 +173,22 @@ class LightAgent:
             examples = plugin.examples["parameters_extraction"]
 
         prompt_extract_params = self.prompt_generator.format_prompt_function_parameters_extraction(function.name, function.description, parameters_prompts, parameters_format, message.content, examples)
-        self.log.write(f"\n\n== prompt to extract parameters to the function {function.name}\n")
-        self.log.write(prompt_extract_params)
-        self.log.write(f"\n\n== prompt to extract parameters to the function {function.name}\n")
-        self.log.write(prompt_extract_params)
         start_time = time.time()
         response = self.llm.generate(prompt_extract_params, reasoning=True)
         end_time = time.time()
-        Helpers.metrics_helper(metrics, "perf", "extract_params_to_function", end_time - start_time)
-        self.log.write(f"\n\n== response from LLM\n")
-        self.log.write(response)
+        LogHelpers.metrics_helper(metrics, "perf", "extract_params_to_function", end_time - start_time)
          
-        processed_params = Postprocessor.try_parse_json_from_llm(response)
+        processed_params = LLMPostprocessor.try_parse_json_from_llm(response)
         
+        log_str_params = ""
         for k, v in processed_params.items():
             for param in parameters:
                 if k == param.name and v is not None:
                     param.value = {k: v}
-                    self.log.write(f"== extracted parameter: {k} -> {v}\n")
-                    Helpers.metrics_log_helper(metrics, "log", f"extract_params_to_function::{k} -> {v}", end_time - start_time)
+                    log_str_params += f"== extracted parameter: {k} -> {v}\n"
+                    LogHelpers.metrics_log_helper(metrics, "log", f"extract_params_to_function::{k} -> {v}", end_time - start_time)
+
+        LogHelpers.metrics_log_helper(metrics, "details", f"\n\n== prompt to extract parameters to the function {function.name}\n{prompt_extract_params}\n== response from LLM\n{response}\n{log_str_params}\n", end_time - start_time)
         return parameters
 
     def check_params_to_function(self, parameters: List[Parameter]) -> Tuple[dict, dict]:
@@ -258,19 +243,16 @@ class LightAgent:
                                                                            prompt_inner_tool_invokation_results,
                                                                            query,
                                                                            success)
-        self.log.write(f"\n\n== prompt to respond\n")
-        self.log.write(prompt_responding)
-        self.log.write(f"\n\n== prompt to respond\n")
-        self.log.write(prompt_responding)
         start_time = time.time()
         response = self.llm.generate(prompt_responding, reasoning=False)
         end_time = time.time()
-        Helpers.metrics_helper(metrics, "perf", "respond", end_time - start_time)
-        Helpers.metrics_log_helper(metrics, "log", f"respond::{response}", end_time - start_time)
-        self.log.write(f"\n\n== response from LLM\n")
-        self.log.write(response)
-        response = Postprocessor.postprocess_llm(response)
-        # todo: parse the response
+        LogHelpers.metrics_helper(metrics, "perf", "respond", end_time - start_time)
+
+        postprocessed_response = LLMPostprocessor.postprocess_llm(response)
+
+        LogHelpers.metrics_log_helper(metrics, "log", f"respond::{postprocessed_response}", end_time - start_time)
+        LogHelpers.metrics_log_helper(metrics, "details", f"\n\n== prompt to respond\n{prompt_responding}\n== response from LLM\n{response}\n== processed response: {postprocessed_response}\n", end_time - start_time)
+
         return response
 
     def execute_ask_for_user_input(self, plugin: Plugin, function: Function, parameters: dict):
@@ -286,8 +268,9 @@ class LightAgent:
         start_time = time.time()
         results = self.plugin_runner.run(plugin.name, function.name, parameters)
         end_time = time.time()
-        Helpers.metrics_helper(metrics, "perf", "execute_function", end_time - start_time)
-        Helpers.metrics_log_helper(metrics, "log", f"execute_function::{results[:150]}...", end_time - start_time)
+        LogHelpers.metrics_helper(metrics, "perf", "execute_function", end_time - start_time)
+        LogHelpers.metrics_log_helper(metrics, "log", f"execute_function::{results[:50]}...", end_time - start_time)
+        LogHelpers.metrics_log_helper(metrics, "details", f"\n\n== {plugin.name}::{function.name} execution\n{results[:150]}...", end_time - start_time)
         return results
 
     def update_context(self, context: Context = None, message: Message = None, user_profile: UserProfile=None, inner_tool_invokation_results: List[InnerToolInvokationResult] = [], options: dict = {}):
@@ -316,7 +299,7 @@ class LightAgent:
         self.update_context(context=context, inner_tool_invokation_results=context.inner_tool_invokation_results + [cur_tool_invokation_result])
 
     def check_detected_plugin_results(self, context: Context, plugin: Plugin) -> bool:
-        if not plugin:
+        if not plugin or plugin.name == "":
             self.handle_plugin_results(context, "", "", False, "No plugin detected.", None)
             return False
         
@@ -331,7 +314,7 @@ class LightAgent:
         return True
 
     def check_detected_function_results(self, context: Context, plugin: Plugin, function: Function) -> bool:
-        if not function:
+        if not function or function.name not in [f.name for f in plugin.functions]:
             self.handle_plugin_results(context, plugin.name, "", False, f"The plugin {plugin.name} was failed.", None)
             return False
         return True
@@ -340,12 +323,13 @@ class LightAgent:
         # message -> content, conversation_id, enabled_plugins
         # context -> conversation history, user profile, inner triggered results
         # context is agg data from `users` and `messages` tables, will not be persisted in the database.
-        self.log = open(f"prompt_{message.id}.log", "w", encoding="utf-8")
         metrics = {}
-        self.log.write(f"\n== chat with message\n")
+
         context = self.conv_mnger.get_message_context(message)
         self.update_context(context=context, message=message, options=options)
-        self.log.write(f"\n== context\n")
+
+        LogHelpers.metrics_log_helper(metrics, "details", f"\n\n== context\n{context}\n", None)
+        
         self.enabled_plugins = self.register_plugins(message.enabled_plugins + context.enabled_plugins)
         
         # tools trigger and invokation step
@@ -382,8 +366,6 @@ class LightAgent:
                     success = False
             
             self.handle_plugin_results(context, plugin.name, function.name, success, result, None)
-            self.log.write(f"== trigger results\n")
-            self.log.write(result)
             if success:
                 # detach the successfully triggered plugin
                 detached_plugins.append(plugin)
@@ -392,6 +374,5 @@ class LightAgent:
         response = self.respond(message, context, metrics)
 
         self.conv_mnger.save_message(message, context, response)
-        self.log.close()
         return response, metrics
 

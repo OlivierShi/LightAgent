@@ -1,6 +1,6 @@
+import io
 
-
-class Helpers:
+class LogHelpers:
     @staticmethod
     def metrics_helper(metrics: dict, metric_name: str, segment_name: str, metric_value: float) -> None:
         if metric_name not in metrics:
@@ -12,11 +12,14 @@ class Helpers:
         metrics[metric_name][segment_name].append(metric_value)
 
     @staticmethod
-    def metrics_log_helper(metrics: dict, metric_name: str, log: str, duration: float) -> None:
+    def metrics_log_helper(metrics: dict, metric_name: str, log: str, duration: float = None) -> None:
         if metric_name not in metrics:
             metrics[metric_name] = []
         
-        metrics[metric_name].append(f"{log}\t[{duration} s]")
+        if duration is not None:
+            log += f"\n[Duration: {duration} s]"
+
+        metrics[metric_name].append(log)
 
     @staticmethod
     def metrics_printer(metrics: dict):
@@ -41,3 +44,9 @@ class Helpers:
                 print(f"Metric: {metric_name}")
                 for l in segments:
                     print(f"\t{l}")
+
+    @staticmethod
+    def details_logger(metrics: dict, logger_path: str):
+        with open(logger_path, 'w', encoding='utf-8') as logger:
+            logger.write("\n".join(metrics["details"]))
+            logger.write("\n")
