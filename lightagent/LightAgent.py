@@ -6,7 +6,8 @@ from prompt_generator import PromptGenerator
 from models import Plugin, Message, Function, Parameter, Context, UserProfile, InnerToolInvokationResult
 from llms import BaseLLM
 from plugins import PluginRunner
-from conversation_manager import ConversationManager
+from storage.conversation_manager import ConversationManager
+from storage.logger import Logger
 from config import BaseConfig
 from utils.log_helpers import LogHelpers
 from utils.llm_postprocessor import LLMPostprocessor
@@ -17,7 +18,11 @@ class LightAgent:
     """
     Since the mini-LLM is a light-weight version of the LLM, the agent to drive LLM need to be specific for light-weight. It means the task to handle the query need to be decomposed into minimized tasks. 
     """
-    def __init__(self, prompt_generator: PromptGenerator, llm: BaseLLM, conv_mnger: ConversationManager, plugin_runner: PluginRunner = None):
+    def __init__(self, prompt_generator: PromptGenerator, 
+                 llm: BaseLLM, 
+                 conv_mnger: ConversationManager, 
+                 plugin_runner: PluginRunner,
+                 logger: Logger):
         self.max_tool_invokation_times = 1
         self.prompt_generator = prompt_generator
         self.llm = llm
@@ -27,7 +32,8 @@ class LightAgent:
         self.default_plugins = self.register_plugins(self.default_plugins_names) # default plugins
         self.enabled_plugins = [] # enabled plugins by the query
 
-        self.plugin_runner = PluginRunner() if plugin_runner is None else plugin_runner
+        self.plugin_runner = plugin_runner
+        self.logger = logger
 
     def parse_plugin(self, plugin_name: str) -> Plugin:
         # parse the plugin name to get the plugin object
@@ -374,5 +380,8 @@ class LightAgent:
         response = self.respond(message, context, metrics)
 
         self.conv_mnger.save_message(message, context, response)
+
+        self.logger.log("\n".join(metrics["details"]), message.id)
+
         return response, metrics
 

@@ -50,7 +50,7 @@ def test_sqlite3():
     db.create_table("messages", "id TEXT PRIMARY KEY, content TEXT, last_modified_datetime TEXT, location TEXT, conversation_id TEXT, enabled_plugins TEXT, inner_tool_invokation_results TEXT, response TEXT")
     
 def test_conv_manager_save_message():
-    from lightagent.conversation_manager import ConversationManager
+    from lightagent.storage.conversation_manager import ConversationManager
     from lightagent.storage.sqlite import SQLiteStorage
     from lightagent.models import Message, Context, UserProfile
     from datetime import datetime
@@ -63,10 +63,10 @@ def test_conv_manager_save_message():
     
     cm.save_message(message, context)
 
-    cm.close_storage()
+    db.close()
 
 def test_conv_manager_get_message():
-    from lightagent.conversation_manager import ConversationManager
+    from lightagent.storage.conversation_manager import ConversationManager
     from lightagent.storage.sqlite import SQLiteStorage
     from lightagent.models import Message, Context, UserProfile
     from datetime import datetime
@@ -78,12 +78,13 @@ def test_conv_manager_get_message():
     context = cm.get_message_context(message)
 
     print(context)
-    cm.close_storage()
+    db.close()
 
 def test_LightAgent_multiturn():
     from datetime import datetime
     from lightagent.prompt_generator import PromptGenerator
-    from lightagent.conversation_manager import ConversationManager
+    from lightagent.storage.conversation_manager import ConversationManager
+    from lightagent.storage.logger import Logger
     from lightagent.storage.sqlite import SQLiteStorage    
     from lightagent.models import Message
     from lightagent.llms import GPT35
@@ -93,7 +94,8 @@ def test_LightAgent_multiturn():
         os.remove("test-sqlite.db")
     db = SQLiteStorage("test-sqlite.db")
     cm = ConversationManager(db)
-    orch = LightAgent(PromptGenerator(), GPT35("gpt3.5"), cm, PluginRunner())
+    logger = Logger(db)
+    orch = LightAgent(PromptGenerator(), GPT35("gpt3.5"), cm, PluginRunner(), logger)
 
     message = Message("123", "Who are you?", datetime.now(), "abcd",  ["web_search", "message_in_a_bottle"])
     response, metrics = orch.chat(message)

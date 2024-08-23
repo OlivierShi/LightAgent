@@ -1,4 +1,4 @@
-import io
+from storage.logger import Logger
 
 class LogHelpers:
     @staticmethod
