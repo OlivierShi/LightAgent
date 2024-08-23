@@ -2,8 +2,8 @@ import json
 from typing import List, Tuple
 import time
 from datetime import datetime
-from prompt_generator import PromptGenerator
-from models import Plugin, Message, Function, Parameter, Context, UserProfile, InnerToolInvokationResult
+from prompts.prompt_generator import PromptGenerator
+from data_schemas import Plugin, Message, Function, Parameter, Context, UserProfile, InnerToolInvokationResult
 from llms import BaseLLM
 from plugins import PluginRunner
 from storage.conversation_manager import ConversationManager

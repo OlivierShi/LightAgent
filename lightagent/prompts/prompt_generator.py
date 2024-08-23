@@ -1,5 +1,5 @@
 from typing import List
-from models import UserProfile, Message, InnerToolInvokationResult, Plugin, Function
+from data_schemas import UserProfile, Message, InnerToolInvokationResult, Plugin, Function
 from config import BaseConfig
 import os
 import json

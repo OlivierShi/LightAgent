@@ -29,8 +29,8 @@ def test_search_wiki():
 
 def test_lightAgent_chat():
     from datetime import datetime
-    from lightagent.prompt_generator import PromptGenerator
-    from lightagent.models import Message
+    from lightagent.prompts.prompt_generator import PromptGenerator
+    from lightagent.data_schemas import Message
     from lightagent.llms import GPT35
     from lightagent.plugins import PluginRunner
     from lightagent.LightAgent import LightAgent
@@ -52,7 +52,7 @@ def test_sqlite3():
 def test_conv_manager_save_message():
     from lightagent.storage.conversation_manager import ConversationManager
     from lightagent.storage.sqlite import SQLiteStorage
-    from lightagent.models import Message, Context, UserProfile
+    from lightagent.data_schemas import Message, Context, UserProfile
     from datetime import datetime
     db = SQLiteStorage("test-sqlite.db")
     cm = ConversationManager(db)
@@ -68,7 +68,7 @@ def test_conv_manager_save_message():
 def test_conv_manager_get_message():
     from lightagent.storage.conversation_manager import ConversationManager
     from lightagent.storage.sqlite import SQLiteStorage
-    from lightagent.models import Message, Context, UserProfile
+    from lightagent.data_schemas import Message, Context, UserProfile
     from datetime import datetime
     db = SQLiteStorage("test-sqlite.db")
     cm = ConversationManager(db)
@@ -82,11 +82,11 @@ def test_conv_manager_get_message():
 
 def test_LightAgent_multiturn():
     from datetime import datetime
-    from lightagent.prompt_generator import PromptGenerator
+    from lightagent.prompts.prompt_generator import PromptGenerator
     from lightagent.storage.conversation_manager import ConversationManager
     from lightagent.storage.logger import Logger
     from lightagent.storage.sqlite import SQLiteStorage    
-    from lightagent.models import Message
+    from lightagent.data_schemas import Message
     from lightagent.llms import GPT35
     from lightagent.plugins import PluginRunner
     from lightagent.LightAgent import LightAgent

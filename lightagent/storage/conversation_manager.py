@@ -1,5 +1,5 @@
 from storage.sqlite import SQLiteStorage
-from models import *
+from data_schemas import *
 from typing import List
 import json
 
