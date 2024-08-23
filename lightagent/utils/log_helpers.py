@@ -1,5 +1,3 @@
-from storage.logger import Logger
-
 class LogHelpers:
     @staticmethod
     def metrics_helper(metrics: dict, metric_name: str, segment_name: str, metric_value: float) -> None:

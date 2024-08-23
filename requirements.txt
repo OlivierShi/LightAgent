@@ -1,0 +1,10 @@
+onnxruntime
+onnxruntime-genai
+openai
+transformers
+wikipedia
+google-api-python-client
+python-dotenv
+beautifulsoup4
+torch
+torchvision
