@@ -92,6 +92,3 @@ class ConversationManager:
             conversation_id_list = self.__deserialize_json(user_data[2]) if user_data and len(user_data) == 3 else []
             conversation_id_list.append(message.conversation_id)
             self.storage.upsert("users", {"id": context.user_profile.id, "name": context.user_profile.name, "conversation_id_list": self.__serialize_json(conversation_id_list)})
-
-    def close_storage(self):
-        self.storage.close()
