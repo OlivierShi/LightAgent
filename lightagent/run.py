@@ -19,7 +19,7 @@ def main(args):
     db = SQLiteStorage("run-sqlite.db")
     cm = ConversationManager(db)
     logger = Logger(db)
-    agent = LightAgent(PromptGenerator(), GPT35("GPT3.5"), cm, PluginRunner(), logger)
+    agent = LightAgent(PromptGenerator(), GPT35(), cm, PluginRunner(), logger)
 
 
     query = ""
@@ -36,7 +36,7 @@ def main(args):
         if query == "exit":
             break
 
-        message = Message(msg_id, query, datetime.now(), conv_id,  ["web_search", "car_assistant"])
+        message = Message(msg_id, query, datetime.now(), conv_id,  ["web_search", "phone_assistant"])
         
         response, metrics = agent.chat(message)
         print(f"LightAgent: {response}")

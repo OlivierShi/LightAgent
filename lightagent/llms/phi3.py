@@ -10,7 +10,7 @@ torch.manual_seed(0)
 
 class Phi3(BaseLLM):
 
-    def __init__(self):
+    def __init__(self, model_name="phi3-mini-int4"):
         self.model_name = "phi3-mini-int4"
         path = os.path.join(BaseConfig.BASE_DIR, "res/models/cpu-int4-rtn-block-32-acc-level-4")
         self.model = og.Model(path)

@@ -15,5 +15,11 @@ The output is in the form of a dictionary with the parameter name as the key and
 
 # AI Assistant
 {examples}
+<assistant>Detection started.
+## Conversation History
+{conversation_history}
+## Completed Inner Tool Invocation Results
+{inner_tool_invokation_results}
+## Predicting Tool Invocation Response
 <user>{query}
 <assistant>

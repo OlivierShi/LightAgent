@@ -138,9 +138,9 @@
         }
     ],
     "examples": {
-        "tool_detection": "<assistant>Detection started.\n## Conversation History\n<user>Do you hate me?\n<assistant>Sorry, i don't understand and cannot help with that.\n<user>please open the driver-side window.\n## Completed Inner Tool Invocation Results\n\n## Predicting Tool Invocation Response\n<user>please open the driver-side window.\n<assistant>{\"tool\":\"car_assistant\"}\n<assistant>Thoughts: I must invoke {\"tool\":\"car_assistant\"} to assist users open the driver-side window.\n<assistant>Detection ended.",
-        "function_detection": "<user>please open the driver-side window.\n<assistant>{\"tool\":\"adjust_windows\"}\n<assistant>Thoughts: I must invoke {\"tool\":\"adjust_windows\"} to assist in opening the driver-side window.",
-        "parameters_extraction": "<user>please open the driver-side window.\n<assistant>{\"window_type\": \"driver_side\", \"state\": true}\n<assistant>Thoughts: User is asking for opening the driver-side window, the parameter is {\"window_type\": \"driver_side\", \"state\": true}",
+        "tool_detection": "<assistant>Detection started.\n## Conversation History\n<user>please open the driver-side window.\n## Completed Inner Tool Invocation Results\n\n## Predicting Tool Invocation Response\n<user>please open the driver-side window.\n<assistant>{\"tool\":\"car_assistant\"}\n<assistant>Thoughts: I must invoke {\"tool\":\"car_assistant\"} to assist users open the driver-side window.\n<assistant>Detection ended.",
+        "function_detection": "<assistant>Detection started.\n## Conversation History\n<user>please open the driver-side window.\n## Completed Inner Tool Invocation Results\n\n## Predicting Tool Invocation Response\n<user>please open the driver-side window.\n<assistant>{\"tool\":\"adjust_windows\"}\n<assistant>Thoughts: I must invoke {\"tool\":\"adjust_windows\"} to assist in opening the driver-side window.",
+        "parameters_extraction": "<assistant>Detection started.\n## Conversation History\n<user>please open the driver-side window.\n## Completed Inner Tool Invocation Results\n\n## Predicting Tool Invocation Response\n<user>please open the driver-side window.\n<assistant>{\"window_type\": \"driver_side\", \"state\": true}\n<assistant>Thoughts: User is asking for opening the driver-side window, the parameter is {\"window_type\": \"driver_side\", \"state\": true}",
         "response": ""
     }
 }

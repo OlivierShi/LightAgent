@@ -5,10 +5,12 @@ import os
 import json
 from datetime import datetime
 
+ASK_FOR_USER_INPUT = "ASK_FOR_USER_INPUT"
+
+
 class PromptGenerator:
     def __init__(self,):
         self.prompt_tools_detection = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_tools_detection.md", "r").read()
-        self.prompt_function_detection = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_function_detection.md", "r").read()
         self.prompt_function_parameters_extraction = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_function_parameters_extraction.md", "r").read()
         self.prompt_responding = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_responding.md", "r").read()
         self.prompt_responding_failure = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_responding_failure.md", "r").read()
@@ -40,15 +42,6 @@ class PromptGenerator:
                 .replace("{inner_tool_invokation_results}", inner_tool_invokation_results) \
                 .replace("{query}", query)
     
-    def format_prompt_function_detection(self, description: str, trigger_instruction: str, query: str, examples: str = None):
-        if self._is_none_or_whitespace(examples):
-            examples = ""
-        return self.prompt_function_detection                          \
-                .replace("{description}", description)                 \
-                .replace("{trigger_instruction}", trigger_instruction) \
-                .replace("{examples}", examples)                       \
-                .replace("{query}", query)
-        
     def format_prompt_function_parameters_extraction_parameter(self, name: str, type: str, required: bool, description: str):
         required_str = "required" if required else "optional"
         return """        {name} ({type}, {required}): {description}.""" \
@@ -68,7 +61,7 @@ class PromptGenerator:
 
         return "{" + parameters_format + "}"
     
-    def format_prompt_function_parameters_extraction(self, function_name: str, description: str, parameters: str, format: str, query: str, examples: str = None):
+    def format_prompt_function_parameters_extraction(self, function_name: str, description: str, parameters: str, format: str, conversation_history: str, inner_tool_invokation_results: str, query: str, examples: str = None):
         if self._is_none_or_whitespace(examples):
             examples = ""
         return self.prompt_function_parameters_extraction  \
@@ -76,7 +69,9 @@ class PromptGenerator:
                 .replace("{description}", description)     \
                 .replace("{parameters}", parameters)       \
                 .replace("{format}", format)               \
-                .replace("{examples}", examples)           \
+                .replace("{examples}", examples)                                           \
+                .replace("{conversation_history}", conversation_history)                   \
+                .replace("{inner_tool_invokation_results}", inner_tool_invokation_results) \
                 .replace("{query}", query)
        
     def format_prompt_responding_instruction(self, included_plugins: List[Plugin]):

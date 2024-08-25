@@ -3,7 +3,7 @@ from llms.base_LLM import BaseLLM
 from config import BaseConfig
 
 class GPT35(BaseLLM):
-    def __init__(self, model_name):
+    def __init__(self, model_name = "gpt-3.5"):
         self.model_name = model_name
         self.client = AzureOpenAI(
             azure_endpoint = BaseConfig.openai_azure_endpoint, 
