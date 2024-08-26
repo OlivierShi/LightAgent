@@ -32,6 +32,55 @@ class LightAgent:
         self.plugin_runner = plugin_runner
         self.logger = logger
 
+    def chat(self, message: Message, options: dict = {}):
+        # message -> content, conversation_id, enabled_plugins
+        # context -> conversation history, user profile, inner triggered results
+        # context is agg data from `users` and `messages` tables, will not be persisted in the database.
+        metrics = {}
+
+        context = self.conv_mnger.get_message_context(message)
+        AgentHelpers.update_context(context=context, message=message, options=options)
+
+        LogHelpers.metrics_log_helper(metrics, "details", f"\n\n== context\n{context}\n", None)
+        
+        self.enabled_plugins = self.register_plugins(message.enabled_plugins + context.enabled_plugins)
+        
+        # tools trigger and invokation step
+        _tool_invokation_num = 0
+        detached_plugins = []
+        while _tool_invokation_num < self.max_tool_invokation_times:
+            _tool_invokation_num += 1
+
+            plugin = self.detect_plugin(message, context, detached_plugins, metrics)
+            should_skip_reasoning, is_valid_plugin, returnback_data = AgentHelpers.check_detected_plugin_results(plugin, self.enabled_plugins + self.default_plugins)
+
+            AgentHelpers.update_context_by_plugin_results(context, plugin, None, is_valid_plugin, returnback_data, None)
+            if should_skip_reasoning:
+                break
+            
+            function = self.detect_function(plugin, message, context, metrics)
+            should_skip_reasoning, is_valid_function, returnback_data = AgentHelpers.check_detected_function_results(plugin, function)
+            AgentHelpers.update_context_by_plugin_results(context, plugin, function, is_valid_function, returnback_data, None)
+            if should_skip_reasoning:
+                break
+
+            params = self.extract_params_to_function(plugin, function, message, context, metrics)
+            result, success = self.execute_function(plugin, function, params, metrics)
+
+            AgentHelpers.update_context_by_plugin_results(context, plugin, function, success, result, None)
+            if success:
+                # detach the successfully triggered plugin
+                detached_plugins.append(plugin)
+
+        # response step
+        response = self.respond(message, context, metrics)
+
+        self.conv_mnger.save_message(message, context, response)
+
+        self.logger.log("\n".join(metrics["details"]), message.id)
+
+        return response, metrics
+    
     def register_plugins(self, plugin_names: list) -> List[Plugin]:
         return [self.all_plugins[plugin_name] for plugin_name in set(plugin_names)]
 
@@ -276,52 +325,4 @@ class LightAgent:
 
         return result, success
 
-    def chat(self, message: Message, options: dict = {}):
-        # message -> content, conversation_id, enabled_plugins
-        # context -> conversation history, user profile, inner triggered results
-        # context is agg data from `users` and `messages` tables, will not be persisted in the database.
-        metrics = {}
-
-        context = self.conv_mnger.get_message_context(message)
-        AgentHelpers.update_context(context=context, message=message, options=options)
-
-        LogHelpers.metrics_log_helper(metrics, "details", f"\n\n== context\n{context}\n", None)
-        
-        self.enabled_plugins = self.register_plugins(message.enabled_plugins + context.enabled_plugins)
-        
-        # tools trigger and invokation step
-        _tool_invokation_num = 0
-        detached_plugins = []
-        while _tool_invokation_num < self.max_tool_invokation_times:
-            _tool_invokation_num += 1
-
-            plugin = self.detect_plugin(message, context, detached_plugins, metrics)
-            should_skip_reasoning, is_valid_plugin, returnback_data = AgentHelpers.check_detected_plugin_results(plugin, self.enabled_plugins + self.default_plugins)
-
-            AgentHelpers.update_context_by_plugin_results(context, plugin, None, is_valid_plugin, returnback_data, None)
-            if should_skip_reasoning:
-                break
-            
-            function = self.detect_function(plugin, message, context, metrics)
-            should_skip_reasoning, is_valid_function, returnback_data = AgentHelpers.check_detected_function_results(plugin, function)
-            AgentHelpers.update_context_by_plugin_results(context, plugin, function, is_valid_function, returnback_data, None)
-            if should_skip_reasoning:
-                break
-
-            params = self.extract_params_to_function(plugin, function, message, context, metrics)
-            result, success = self.execute_function(plugin, function, params, metrics)
-
-            AgentHelpers.update_context_by_plugin_results(context, plugin, function, success, result, None)
-            if success:
-                # detach the successfully triggered plugin
-                detached_plugins.append(plugin)
-
-        # response step
-        response = self.respond(message, context, metrics)
-
-        self.conv_mnger.save_message(message, context, response)
-
-        self.logger.log("\n".join(metrics["details"]), message.id)
-
-        return response, metrics
 

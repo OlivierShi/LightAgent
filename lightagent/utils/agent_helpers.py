@@ -116,8 +116,15 @@ class AgentHelpers:
     def update_context_by_plugin_results(context: Context, plugin: Plugin, function: Function, success: bool, data: str, prompt: str=None):
         plugin_name = plugin.name if plugin else ""
         function_name = function.name if function else ""
-        cur_tool_invokation_result = InnerToolInvokationResult(plugin_name, function_name, success=success, data=data, prompt=None)
-        AgentHelpers.update_context(context=context, inner_tool_invokation_results=context.inner_tool_invokation_results + [cur_tool_invokation_result])
+        plugins_results = context.inner_tool_invokation_results
+        if function_name == "" or plugins_results[-1].plugin_name != plugin_name:
+            plugins_results.append(InnerToolInvokationResult(plugin_name, function_name, success=success, data=data, prompt=None))
+        else:
+            plugins_results[-1].function_name = function_name
+            plugins_results[-1].success = success
+            plugins_results[-1].data = data
+
+        AgentHelpers.update_context(context=context, inner_tool_invokation_results=plugins_results)
    
     @staticmethod
     def detach_plugins(plugins: List[Plugin], detached_plugins: List[Plugin]) -> List[Plugin]:
