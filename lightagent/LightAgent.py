@@ -28,7 +28,6 @@ class LightAgent:
         self.all_plugins = AgentHelpers.load_all_plugins()
         self.default_plugins_names = ["generate_response", "withdraw"]
         self.default_plugins = self.register_plugins(self.default_plugins_names) # default plugins
-        self.enabled_plugins = [] # todo: enabled plugins by the query
         self.plugin_runner = plugin_runner
         self.logger = logger
 
@@ -43,8 +42,6 @@ class LightAgent:
 
         LogHelpers.metrics_log_helper(metrics, "details", f"\n\n== context\n{context}\n", None)
         
-        self.enabled_plugins = self.register_plugins(message.enabled_plugins + context.enabled_plugins)
-        
         # tools trigger and invokation step
         _tool_invokation_num = 0
         detached_plugins = []
@@ -52,7 +49,7 @@ class LightAgent:
             _tool_invokation_num += 1
 
             plugin = self.detect_plugin(message, context, detached_plugins, metrics)
-            should_skip_reasoning, is_valid_plugin, returnback_data = AgentHelpers.check_detected_plugin_results(plugin, self.enabled_plugins + self.default_plugins)
+            should_skip_reasoning, is_valid_plugin, returnback_data = AgentHelpers.check_detected_plugin_results(plugin, self.get_enabled_plguins(context.enabled_plugins))
 
             AgentHelpers.update_context_by_plugin_results(context, plugin, None, is_valid_plugin, returnback_data, None)
             if should_skip_reasoning:
@@ -74,16 +71,20 @@ class LightAgent:
 
         # response step
         response = self.respond(message, context, metrics)
+        message.response = response
 
-        self.conv_mnger.save_message(message, context, response)
+        self.conv_mnger.save_message(message, context)
 
         self.logger.log("\n".join(metrics["details"]), message.id)
 
-        return response, metrics
+        return message, metrics
     
     def register_plugins(self, plugin_names: list) -> List[Plugin]:
         return [self.all_plugins[plugin_name] for plugin_name in set(plugin_names)]
 
+    def get_enabled_plguins(self, enabled_plugin_names: List[str]) -> List[Plugin]:
+        return [self.all_plugins[plugin_name] for plugin_name in set(enabled_plugin_names + self.default_plugins_names)]
+    
     def detect_plugin(self, message: Message, context: Context, detached_plugins: List[Plugin] = [], metrics={}) -> Plugin:
         """
         Given message, determine which plugin is relevant.
@@ -100,7 +101,7 @@ class LightAgent:
         plugins_trigger = ""
         examples = ""
 
-        plugins_to_detect = AgentHelpers.detach_plugins(self.enabled_plugins + self.default_plugins, detached_plugins)
+        plugins_to_detect = AgentHelpers.detach_plugins(self.get_enabled_plguins(context.enabled_plugins), detached_plugins)
         for plugin in plugins_to_detect:
             plugins_description += self.prompt_generator.format_prompt_tools_detection_description(plugin.name, plugin.description)
             plugins_description += "\n"
@@ -140,7 +141,7 @@ class LightAgent:
 
         detected_plugin = None
 
-        for plugin in self.enabled_plugins + self.default_plugins:
+        for plugin in self.get_enabled_plguins(context.enabled_plugins):
             if processed_plugin_name == plugin.name:
                 detected_plugin = plugin
                 break
@@ -279,7 +280,7 @@ class LightAgent:
         prompt_conversation_history = self.prompt_generator.format_conversation_history(conversation_history)
         prompt_inner_tool_invokation_results = self.prompt_generator.format_inner_tool_invokation_results(inner_tool_invokation_results)
         
-        included_plugin_names = AgentHelpers.aggregate_enabled_and_invoked_plugins(self.enabled_plugins, inner_tool_invokation_results)
+        included_plugin_names = AgentHelpers.aggregate_enabled_and_invoked_plugins(self.get_enabled_plguins(context.enabled_plugins), inner_tool_invokation_results)
         prompt_responding_instruction = self.prompt_generator.format_prompt_responding_instruction([self.all_plugins[p_n] for p_n in included_plugin_names])
 
         success = all([res.success for res in inner_tool_invokation_results])

@@ -38,8 +38,8 @@ def main(args):
 
         message = Message(msg_id, query, datetime.now(), conv_id,  ["web_search", "phone_assistant"])
         
-        response, metrics = agent.chat(message)
-        print(f"LightAgent: {response}")
+        new_message, metrics = agent.chat(message)
+        print(f"LightAgent: {new_message.response}")
         LogHelpers.metrics_printer(metrics)
 
         if args.verbose:

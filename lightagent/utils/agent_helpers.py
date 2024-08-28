@@ -98,13 +98,15 @@ class AgentHelpers:
         if "user_location" in options:
             context.user_profile.location = options["user_location"]
         if "enabled_plugins" in options:
-            context.enabled_plugins = options["enabled_plugins"]
+            context.enabled_plugins = list(set(options["enabled_plugins"] + context.enabled_plugins))
 
     @staticmethod
     def update_context(context: Context = None, message: Message = None, user_profile: UserProfile=None, inner_tool_invokation_results: List[InnerToolInvokationResult] = [], options: dict = {}):
         # given trigger_results and context, update the context
         if message:
             context.conversation_history.append(message)
+            if message.enabled_plugins and len(message.enabled_plugins) > 0:
+                context.enabled_plugins = list(set(message.enabled_plugins + context.enabled_plugins))
         if user_profile:
             context.user_profile = user_profile
         if inner_tool_invokation_results:

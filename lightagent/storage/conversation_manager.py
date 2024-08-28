@@ -67,7 +67,7 @@ class ConversationManager:
         )
 
 
-    def save_message(self, message: Message, context: Context, response: str = None):
+    def save_message(self, message: Message, context: Context):
         self.storage.upsert("messages", {
             "id": message.id,
             "content": message.content,
@@ -76,7 +76,7 @@ class ConversationManager:
             "conversation_id": message.conversation_id,
             "enabled_plugins": self.__serialize_json(message.enabled_plugins),
             "inner_tool_invokation_results": self.__serialize_inner_tool_invokation_results(context.inner_tool_invokation_results),
-            "response": response
+            "response": message.response if message.response else ""
         })
 
         message_id_list = [msg.id for msg in context.conversation_history]
