@@ -1,9 +1,9 @@
 from typing import List, Tuple
 import os
 import json
-from data_schemas import Parameter, InnerToolInvokationResult, Plugin, Context, Function, UserProfile, Message
-from prompts.prompt_generator import ASK_FOR_USER_INPUT
-from config import BaseConfig
+from ..data_schemas import Parameter, InnerToolInvokationResult, Plugin, Context, Function, UserProfile, Message
+from ..prompts.prompt_generator import ASK_FOR_USER_INPUT
+from ..config import BaseConfig
 
 class AgentHelpers:
     

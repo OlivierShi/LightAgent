@@ -1,7 +1,7 @@
-from storage.sqlite import SQLiteStorage
-from data_schemas import *
 from typing import List
 import json
+from ..storage.sqlite import SQLiteStorage
+from ..data_schemas import *
 
 class ConversationManager:
     def __init__(self, storage: SQLiteStorage):

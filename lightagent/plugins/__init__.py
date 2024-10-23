@@ -1,9 +1,9 @@
 from typing import List
-from plugins.impl.web_search import WebSearch
-from plugins.impl.graphic import Graphic
-from plugins.impl.message_in_a_bottle import MessageInABottle
-from plugins.impl.phone_assistant import PhoneAssistant
-from plugins.impl.car_assistant import CarAssistant
+from ..plugins.impl.web_search import WebSearch
+from ..plugins.impl.graphic import Graphic
+from ..plugins.impl.message_in_a_bottle import MessageInABottle
+from ..plugins.impl.phone_assistant import PhoneAssistant
+from ..plugins.impl.car_assistant import CarAssistant
 
 
 class PluginRunner:

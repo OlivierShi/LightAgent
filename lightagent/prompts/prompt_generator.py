@@ -1,9 +1,9 @@
 from typing import List
-from data_schemas import UserProfile, Message, InnerToolInvokationResult, Plugin, Function
-from config import BaseConfig
 import os
 import json
 from datetime import datetime
+from ..data_schemas import UserProfile, Message, InnerToolInvokationResult, Plugin, Function
+from ..config import BaseConfig
 
 ASK_FOR_USER_INPUT = "ASK_FOR_USER_INPUT"
 
