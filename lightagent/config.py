@@ -13,3 +13,6 @@ class BaseConfig():
 
     google_search_api_key = os.getenv('google_api_key')
     google_search_cse_id = os.getenv('google_cse_id')
+
+    bing_search_api_key = os.getenv('bing_search_api_key')
+    bing_search_api_endpoint = os.getenv('bing_search_api_endpoint')

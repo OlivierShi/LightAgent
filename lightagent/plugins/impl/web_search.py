@@ -6,23 +6,88 @@ import requests
 import urllib.parse
 import asyncio
 import concurrent.futures
-from config import BaseConfig
 from googleapiclient.discovery import build
+from urllib.parse import urlparse
+from config import BaseConfig
+from utils.plugins_helper import PluginsHelper
 
-def google_search_api(query: str, num=4) -> List[str]:
+def fetch_url_content(url: str) -> str:
+    try:
+        res = requests.get(url, timeout=1)
+        res.raise_for_status()
+        html_content = res.content
+        soup = BeautifulSoup(html_content, 'html.parser')
+        text = soup.get_text(separator=' ', strip=True)
+        return text[200:2000]
+    except Exception as ex:
+        print(f"Failed to fetch content from {url}: {ex}")
+        return ""
+
+def aggregate_search_results(domains: List[str], results: List[str], max_len=1500) -> str:
+    new_results = []
+    new_domains = []
+    for idx, res in enumerate(results):
+        if len(res) > 100:
+            new_results.append(res)
+            new_domains.append(domains[idx])
+    each_len = max_len // len(new_results)
+    aggregated_content = ""
+    for idx, res in enumerate(new_results):
+        aggregated_content += f"{new_domains[idx]}: {res[idx*each_len:(idx+1)*each_len]}\n"
+
+    return aggregated_content
+
+def bing_search_api(query: str, num=2, max_len=1500) -> str:
+    subscription_key = BaseConfig.bing_search_api_key
+    endpoint = BaseConfig.bing_search_api_endpoint
+    params = {"q": query, "mkt": "zh-cn", "sortBy": "Date", "count": 5}
+    headers = {"Ocp-Apim-Subscription-Key": subscription_key}
+
+    try:
+        bing_response = requests.get(endpoint, headers=headers, params=params, timeout=1)
+        bing_response.raise_for_status()
+        search_results = bing_response.json()
+        
+        urls = []
+        domains = []
+        
+        for result in search_results['webPages']['value']:
+            url = result['url']
+            domain = urlparse(url).netloc
+            if domain not in domains:
+                urls.append(url)
+                domains.append(domain)
+            if len(urls) == num:
+                break
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            results = list(executor.map(fetch_url_content, urls))
+
+        return aggregate_search_results(domains, results, max_len)
+
+    except Exception as ex:
+        print(f"Error during Bing search: {ex}")
+        return ""
+    
+def google_search_api(query: str, num=2, max_len=1500) -> str:
     service = build("customsearch", "v1", developerKey=BaseConfig.google_search_api_key)
     res = service.cse().list(q=query, cx=BaseConfig.google_search_cse_id, num=num).execute()
 
-    print(res['items'])
-    url = res['items'][0]["link"]
+    urls = []
+    domains = []
+    
+    for result in res['items']:
+        url = result['link']
+        domain = urlparse(url).netloc
+        if domain not in domains:
+            urls.append(url)
+            domains.append(domain)
+        if len(urls) == num: 
+            break
+    
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        results = list(executor.map(fetch_url_content, urls))
 
-    res = requests.get(url)
-    if res.status_code != 200:
-        raise Exception(f"Failed to get search results from google. Status code: {res.status_code}")
-    html_content = res.content
-    soup = BeautifulSoup(html_content, 'html.parser')
-    text = soup.get_text(separator=' ', strip=True)
-    return text
+    return aggregate_search_results(domains, results, max_len)
 
 def google_search(query: str) -> str:
     headers = {
@@ -77,9 +142,9 @@ def search_engine(query: str, engine: str, retry_cnt=1) -> str:
     
     search_results = "No result found."
     if engine == "google":
-        search_results = retry_search(google_search, query, retry_cnt)
+        search_results = retry_search(google_search_api, query, retry_cnt)
     elif engine == "bing":
-        search_results = retry_search(bing_search, query, retry_cnt)
+        search_results = retry_search(bing_search_api, query, retry_cnt)
     return search_results
 
 
@@ -90,19 +155,23 @@ async def async_search_engine(query = "今天西雅图的天气", engine = "goog
     return result
 
 async def search_web(query = "今天西雅图的天气"):
-    google_results, bing_results = await asyncio.gather(async_search_engine(query, "bing"), async_search_engine(query, "google"))
-    return "\n".join([google_results, bing_results])
+    if PluginsHelper.is_chinese(query):
+        results = await async_search_engine(query, "bing")
+    else:
+        results = await async_search_engine(query, "google")
 
-async def search_wiki_and_news(query = "今天西雅图的天气"):
+    return results
+
+async def search_wiki_and_web(query = "今天西雅图的天气"):
     async def async_wiki_search(query):
         loop = asyncio.get_running_loop()
         with concurrent.futures.ThreadPoolExecutor() as pool:
             result = await loop.run_in_executor(pool, wiki_search, query)
         return result
     
-    wiki_results, google_results, bing_results = await asyncio.gather(async_wiki_search(query), async_search_engine(query, "google"), async_search_engine(query, "bing"))
+    wiki_results, web_results = await asyncio.gather(async_wiki_search(query), search_web(query))
 
-    return wiki_results + "\n" + google_results[int(len(google_results)/2):] + "\n" + bing_results[int(len(bing_results)/2):]
+    return f"From wiki: {wiki_results}\nFrom web: {web_results}"
 
 class WebSearch():
     def __init__(self, name: str = "web_search"):
@@ -114,7 +183,7 @@ class WebSearch():
 
     @lru_cache(maxsize=None)
     def search_wiki(self, query: str) -> str:
-        return asyncio.run(search_wiki_and_news(query))
+        return asyncio.run(search_wiki_and_web(query))
 
 if __name__ == '__main__':
     ws = WebSearch()
