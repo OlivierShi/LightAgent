@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pathlib import Path
 import os
 import sys
@@ -12,6 +13,10 @@ def test_plugin_runner():
 
     print(p.run("web_search", "search_news", {"query": "Today's news on Sport"}))
 
+def test_bing_search():
+    from lightagent.plugins.impl.web_search import bing_search
+    print(bing_search("西雅图今天的天气"))
+
 def test_search_news():
     from lightagent.plugins.impl.web_search import WebSearch
     ws = WebSearch()
@@ -19,8 +24,11 @@ def test_search_news():
 
 def test_google_search_api():
     from lightagent.plugins.impl.web_search import google_search_api
-    print(google_search_api("what's the weather in Seattle?"))
+    print(google_search_api("西雅图今天的天气"))
 
+def test_bing_search_api():
+    from lightagent.plugins.impl.web_search import bing_search_api
+    print(bing_search_api("北京天气"))
 
 def test_search_wiki():
     from lightagent.plugins.impl.web_search import WebSearch
@@ -129,4 +137,5 @@ def test_minicpm2b():
 # test_minicpm2b()
 # test_search_news()
 # test_search_wiki()
-test_google_search_api()
+# test_google_search_api()
+test_bing_search_api()
