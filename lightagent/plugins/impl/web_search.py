@@ -8,8 +8,8 @@ import asyncio
 import concurrent.futures
 from googleapiclient.discovery import build
 from urllib.parse import urlparse
-from config import BaseConfig
-from utils.plugins_helper import PluginsHelper
+from ...config import BaseConfig
+from ...utils.plugins_helper import PluginsHelper
 
 def fetch_url_content(url: str) -> str:
     try:

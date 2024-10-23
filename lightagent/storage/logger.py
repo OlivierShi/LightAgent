@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from storage.sqlite import SQLiteStorage
+from ..storage.sqlite import SQLiteStorage
 
 class Logger:
     def __init__(self, storage: SQLiteStorage):

@@ -1,4 +1,4 @@
-from llms.base_LLM import BaseLLM
+from ..llms.base_LLM import BaseLLM
 
 class EchoLLM(BaseLLM):
     def __init__(self, model_name: str):

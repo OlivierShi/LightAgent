@@ -1,7 +1,7 @@
 import openai
-from llms.base_LLM import BaseLLM
-from config import BaseConfig
 from packaging import version
+from ..llms.base_LLM import BaseLLM
+from ..config import BaseConfig
 
 class GPT35(BaseLLM):
     def __init__(self, model_name = "gpt-3.5"):

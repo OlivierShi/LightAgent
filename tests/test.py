@@ -3,8 +3,8 @@ from pathlib import Path
 import os
 import sys
 
-sys.path.append(os.path.join(str(Path(__file__).resolve().parent.parent), "lightagent"))
-sys.path.append('../lightagent/')
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+# sys.path.append('..')
 
 
 def test_plugin_runner():
@@ -136,6 +136,6 @@ def test_minicpm2b():
 # test_wiki_search()
 # test_minicpm2b()
 # test_search_news()
-# test_search_wiki()
+test_search_wiki()
 # test_google_search_api()
-test_bing_search_api()
+# test_bing_search_api()

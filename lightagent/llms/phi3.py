@@ -1,12 +1,11 @@
 import os
-from llms.base_LLM import BaseLLM
-from config import BaseConfig
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers import StoppingCriteria
 import onnxruntime_genai as og
-
 import torch
 torch.manual_seed(0)
+from ..llms.base_LLM import BaseLLM
+from ..config import BaseConfig
 
 class Phi3(BaseLLM):
 

@@ -1,12 +1,11 @@
 import os
-from llms.base_LLM import BaseLLM
-from config import BaseConfig
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from transformers import StoppingCriteria
-
 import torch
 torch.manual_seed(0)
 
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import StoppingCriteria
+from ..llms.base_LLM import BaseLLM
+from ..config import BaseConfig
 
 class EosListStoppingCriteria(StoppingCriteria):
     def __init__(self, eos_sequence):

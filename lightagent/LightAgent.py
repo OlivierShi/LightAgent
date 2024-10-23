@@ -1,16 +1,16 @@
 from typing import List, Tuple
 import time
-from prompts.prompt_generator import PromptGenerator
-from data_schemas import Plugin, Message, Function, Parameter, Context, UserProfile, InnerToolInvokationResult
-from llms import BaseLLM
-from plugins import PluginRunner
-from storage.conversation_manager import ConversationManager
-from storage.logger import Logger
-from config import BaseConfig
-from utils.log_helpers import LogHelpers
-from utils.llm_postprocessor import LLMPostprocessor
-from utils.agent_helpers import AgentHelpers
-from prompts.prompt_generator import ASK_FOR_USER_INPUT
+from .prompts.prompt_generator import PromptGenerator
+from .data_schemas import Plugin, Message, Function, Parameter, Context, UserProfile, InnerToolInvokationResult
+from .llms import BaseLLM
+from .plugins import PluginRunner
+from .storage.conversation_manager import ConversationManager
+from .storage.logger import Logger
+from .config import BaseConfig
+from .utils.log_helpers import LogHelpers
+from .utils.llm_postprocessor import LLMPostprocessor
+from .utils.agent_helpers import AgentHelpers
+from .prompts.prompt_generator import ASK_FOR_USER_INPUT
 
 class LightAgent:
     """

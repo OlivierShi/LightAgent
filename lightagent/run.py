@@ -2,15 +2,19 @@ from datetime import datetime
 import os
 import uuid
 import argparse
-from prompts.prompt_generator import PromptGenerator
-from storage.conversation_manager import ConversationManager
-from storage.logger import Logger
-from storage.sqlite import SQLiteStorage    
-from data_schemas import Message
-from llms import GPT35, Phi3
-from plugins import PluginRunner
-from LightAgent import LightAgent
-from utils.log_helpers import LogHelpers
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+from lightagent.prompts.prompt_generator import PromptGenerator
+from lightagent.storage.conversation_manager import ConversationManager
+from lightagent.storage.logger import Logger
+from lightagent.storage.sqlite import SQLiteStorage    
+from lightagent.data_schemas import Message
+from lightagent.llms import GPT35, Phi3
+from lightagent.plugins import PluginRunner
+from lightagent.LightAgent import LightAgent
+from lightagent.utils.log_helpers import LogHelpers
 
 
 def main(args):
