@@ -16,3 +16,9 @@ class BaseConfig():
 
     bing_search_api_key = os.getenv('bing_search_api_key')
     bing_search_api_endpoint = os.getenv('bing_search_api_endpoint')
+
+    # constants
+    MAX_CONVERSATION_HISTORY_TURNS = 4  # Only put the last 4 messages into the conversation history
+    MAX_CONVERSATION_HISTORY_DAYS = 2  # Only put the messages in the last 2 days into the conversation history
+
+    MAX_SEARCH_ENGINE_RESULTS = 5
