@@ -12,8 +12,8 @@ class PromptGenerator:
     def __init__(self,):
         self.prompt_tools_detection = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_tools_detection.md", "r").read()
         self.prompt_function_parameters_extraction = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_function_parameters_extraction.md", "r").read()
-        self.prompt_responding = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_responding.md", "r").read()
-        self.prompt_responding_failure = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_responding_failure.md", "r").read()
+        self.prompt_responding = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_responding.md", "r", encoding="utf-8").read()
+        self.prompt_responding_failure = open(f"{BaseConfig.BASE_DIR}/prompts/prompt_responding_failure.md", "r", encoding="utf-8").read()
 
     def format_prompt_tools_detection_description(self, name: str, description: str):
         return """- `{name}`: {description}""" \
