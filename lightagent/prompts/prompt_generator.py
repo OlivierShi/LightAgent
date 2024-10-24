@@ -1,7 +1,7 @@
 from typing import List
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from ..data_schemas import UserProfile, Message, InnerToolInvokationResult, Plugin, Function
 from ..config import BaseConfig
 
@@ -105,10 +105,17 @@ class PromptGenerator:
         
         prompt_conversation_history = ""
         ordered_messages = sorted(conversation_history, key=lambda x: x.last_modified_datetime)
+        count_history = 0
         for msg in ordered_messages:
+            if msg.last_modified_datetime < datetime.now() - timedelta(days=BaseConfig.MAX_CONVERSATION_HISTORY_DAYS):
+                break
             prompt_conversation_history += f"<user>{msg.content}\n"
             if msg.response is not None:
                 prompt_conversation_history += f"<assistant>{msg.response}\n"
+            count_history += 1
+
+            if count_history >= BaseConfig.MAX_CONVERSATION_HISTORY_TURNS:
+                break
         return prompt_conversation_history.strip()
 
     def format_inner_tool_invokation_results(self, inner_tool_invokation_results: List[InnerToolInvokationResult] = []):

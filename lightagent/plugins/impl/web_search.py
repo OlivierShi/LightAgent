@@ -23,13 +23,15 @@ def fetch_url_content(url: str) -> str:
         print(f"Failed to fetch content from {url}: {ex}")
         return ""
 
-def aggregate_search_results(domains: List[str], results: List[str], max_len=1500) -> str:
+def aggregate_search_results(domains: List[str], results: List[str], max_count=2, max_len=1500) -> str:
     new_results = []
     new_domains = []
     for idx, res in enumerate(results):
         if len(res) > 100:
             new_results.append(res)
             new_domains.append(domains[idx])
+            if len(new_results) >= max_count:
+                break
     each_len = max_len // len(new_results)
     aggregated_content = ""
     for idx, res in enumerate(new_results):
@@ -37,10 +39,10 @@ def aggregate_search_results(domains: List[str], results: List[str], max_len=150
 
     return aggregated_content
 
-def bing_search_api(query: str, num=2, max_len=1500) -> str:
+def bing_search_api(query: str, max_len=1500) -> str:
     subscription_key = BaseConfig.bing_search_api_key
     endpoint = BaseConfig.bing_search_api_endpoint
-    params = {"q": query, "mkt": "zh-cn", "sortBy": "Date", "count": 5}
+    params = {"q": query, "mkt": "zh-cn", "sortBy": "Date", "count": BaseConfig.MAX_SEARCH_ENGINE_RESULTS}
     headers = {"Ocp-Apim-Subscription-Key": subscription_key}
 
     try:
@@ -57,8 +59,7 @@ def bing_search_api(query: str, num=2, max_len=1500) -> str:
             if domain not in domains:
                 urls.append(url)
                 domains.append(domain)
-            if len(urls) == num:
-                break
+
         with concurrent.futures.ThreadPoolExecutor() as executor:
             results = list(executor.map(fetch_url_content, urls))
 
@@ -68,9 +69,9 @@ def bing_search_api(query: str, num=2, max_len=1500) -> str:
         print(f"Error during Bing search: {ex}")
         return ""
     
-def google_search_api(query: str, num=2, max_len=1500) -> str:
+def google_search_api(query: str, max_len=1500) -> str:
     service = build("customsearch", "v1", developerKey=BaseConfig.google_search_api_key)
-    res = service.cse().list(q=query, cx=BaseConfig.google_search_cse_id, num=num).execute()
+    res = service.cse().list(q=query, cx=BaseConfig.google_search_cse_id, num=BaseConfig.MAX_SEARCH_ENGINE_RESULTS).execute()
 
     urls = []
     domains = []
@@ -81,8 +82,6 @@ def google_search_api(query: str, num=2, max_len=1500) -> str:
         if domain not in domains:
             urls.append(url)
             domains.append(domain)
-        if len(urls) == num: 
-            break
     
     with concurrent.futures.ThreadPoolExecutor() as executor:
         results = list(executor.map(fetch_url_content, urls))
