@@ -99,7 +99,7 @@ class PromptGenerator:
                 
         return prompt_user_profile.strip()
 
-    def format_conversation_history(self, conversation_history: List[Message] = []):
+    def format_conversation_history(self, conversation_history: List[Message] = [], need_tool_invokation_history: bool = False):
         if not conversation_history or len(conversation_history) == 0:
             return None
         
@@ -110,6 +110,10 @@ class PromptGenerator:
             if msg.last_modified_datetime < datetime.now() - timedelta(days=BaseConfig.MAX_CONVERSATION_HISTORY_DAYS):
                 break
             prompt_conversation_history += f"<user>{msg.content}\n"
+
+            if need_tool_invokation_history:
+                if msg.inner_tool_invokation_results is not None and len(msg.inner_tool_invokation_results) > 0:
+                    prompt_conversation_history += self.format_inner_tool_invokation_results(msg.inner_tool_invokation_results) + "\n"
             if msg.response is not None:
                 prompt_conversation_history += f"<assistant>{msg.response}\n"
             count_history += 1

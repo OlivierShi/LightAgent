@@ -14,9 +14,10 @@ class PluginRunner:
         self.phone_assistant = PhoneAssistant()
         self.car_assistant = CarAssistant()
 
-    def run(self, plugin_name: str, function_name: str, params: dict):
+    def run(self, plugin_name: str, function_name: str, params: dict, **kwargs):
         plugin = getattr(self, plugin_name)
         function = getattr(plugin, function_name)
-        return function(**params)
+        combined_params = {**params, **kwargs}
+        return function(**combined_params)
     
 

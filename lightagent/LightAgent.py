@@ -1,5 +1,6 @@
 from typing import List, Tuple
 import time
+import uuid
 from .prompts.prompt_generator import PromptGenerator
 from .data_schemas import Plugin, Message, Function, Parameter, Context, UserProfile, InnerToolInvokationResult
 from .llms import BaseLLM
@@ -31,6 +32,12 @@ class LightAgent:
         self.plugin_runner = plugin_runner
         self.logger = logger
 
+    def initiate_conversation(self, user: UserProfile, enabled_plugins: List[str] = []) -> str:
+        conversation_id = str(uuid.uuid4())
+        new_context = Context(conversation_id, [], user, enabled_plugins)
+        self.conv_mnger.save_init_context(new_context)
+        return conversation_id
+    
     def chat(self, message: Message, options: dict = {}):
         # message -> content, conversation_id, enabled_plugins
         # context -> conversation history, user profile, inner triggered results
@@ -62,7 +69,7 @@ class LightAgent:
                 break
 
             params = self.extract_params_to_function(plugin, function, message, context, metrics)
-            result, success = self.execute_function(plugin, function, params, metrics)
+            result, success = self.execute_function(plugin, function, params, metrics, context)
 
             AgentHelpers.update_context_by_plugin_results(context, plugin, function, success, result, None)
             if success:
@@ -236,7 +243,7 @@ class LightAgent:
 
         conversation_history = context.conversation_history
         inner_tool_invokation_results = context.inner_tool_invokation_results
-        prompt_conversation_history = self.prompt_generator.format_conversation_history(conversation_history)
+        prompt_conversation_history = self.prompt_generator.format_conversation_history(conversation_history, need_tool_invokation_history=function.is_contextual)
         prompt_inner_tool_invokation_results = self.prompt_generator.format_inner_tool_invokation_results(inner_tool_invokation_results)
         
         prompt_extract_params = self.prompt_generator.format_prompt_function_parameters_extraction(
@@ -302,7 +309,7 @@ class LightAgent:
 
         return response
 
-    def execute_function(self, plugin: Plugin, function: Function, parameters:List[Parameter], metrics: dict) -> Tuple[str, bool]:
+    def execute_function(self, plugin: Plugin, function: Function, parameters:List[Parameter], metrics: dict, context: Context = None) -> Tuple[str, bool]:
         # given function and params, execute the function
         start_time = time.time()
         parameters_to_execute, missing_required_parameters_to_execute = AgentHelpers.check_params_to_function(parameters)
@@ -313,7 +320,7 @@ class LightAgent:
             success = False
         else:
             try:
-                result = self.plugin_runner.run(plugin.name, function.name, parameters_to_execute)
+                result = self.plugin_runner.run(plugin.name, function.name, parameters_to_execute, **context.to_plain_dict())
                 success = True
             except:
                 result = f"{plugin.description}, the execution of the function was unsuccessful."

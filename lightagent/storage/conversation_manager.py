@@ -92,3 +92,17 @@ class ConversationManager:
             conversation_id_list = self.__deserialize_json(user_data[2]) if user_data and len(user_data) == 3 else []
             conversation_id_list.append(message.conversation_id)
             self.storage.upsert("users", {"id": context.user_profile.id, "name": context.user_profile.name, "conversation_id_list": self.__serialize_json(conversation_id_list)})
+
+    def save_init_context(self, context: Context):
+        if context.user_profile:
+            user_data = self.storage.get("users", f"id = '{context.user_profile.id}'")
+            conversation_id_list = self.__deserialize_json(user_data[2]) if user_data and len(user_data) == 3 else []
+            conversation_id_list.append(context.conversation_id)
+            self.storage.upsert("users", {"id": context.user_profile.id, "name": context.user_profile.name, "conversation_id_list": self.__serialize_json(conversation_id_list)})
+
+        self.storage.upsert("conversations", {
+            "id": context.conversation_id,
+            "user_id": context.user_profile.id if context.user_profile else "anonymous",
+            "message_id_list": self.__serialize_json([])
+        
+        })

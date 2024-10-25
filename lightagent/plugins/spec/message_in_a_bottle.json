@@ -1,20 +1,20 @@
 {
     "name": "message_in_a_bottle",
-    "description": "This plugin defines a set of tools to implement **Message In A Bottle** scenario. It helps people share/look for ideas, stories, and make friends across the world.",
-    "trigger_instruction": "\n  *When a user wants to retrieve a message bottle and to fetch a message bottle from the ocean, invoke {\"tool\":\"message_in_a_bottle\"};\n  *When a user wants to send a message bottle and to create a message bottle and drop it into the ocean, invoke {\"tool\":\"message_in_a_bottle\"};\n  *When a user wants to understand what is message in a bottle, how to use it, invoke {\"tool\":\"message_in_a_bottle\"};",
-    "response_instruction": "I support Message-in-a-Bottle application. It helps user retrieve, send, reply to a message bottle.",
+    "description": "It is is a creative and nostalgic communication platform that allows users to send messages in a way that mimics the romanticized idea of sending a letter in a bottle to an unknown recipient across the sea. The core concept is about the element of randomness and anonymity, where a user sends a 'bottle' (a message) out into the virtual world, and another random user, perhaps from a different part of the world, picks it up and reads it.",
+    "trigger_instruction": "\n  *When a user wants to retrieve a message bottle and to fetch a message bottle from the ocean, invoke {\"tool\":\"message_in_a_bottle\"};\n  *When a user wants to send a message bottle and to create a message bottle and drop it into the ocean, invoke {\"tool\":\"message_in_a_bottle\"};\n  *当用户想 摇一摇，摇一个漂流瓶，发一条匿名信，阅读一条匿名信，捞一个漂流瓶，捡一个漂流瓶, invoke {\"tool\":\"message_in_a_bottle\"};",
+    "response_instruction": "我是漂流瓶平台，我能提供一个独特的交流方式，让用户通过虚拟的“漂流瓶”向陌生人发送信息，或者随机捡起别人投出的瓶子。你可以匿名分享心情、故事、想法，甚至是秘密，毫无压力地表达自己。我让你和世界上任意角落的陌生人建立短暂的联系，带来意想不到的惊喜和互动。",
     "functions": [
         {
             "name": "retrieve_message_bottle",
             "description": "Retrieve a message bottle and fetch a message bottle from the ocean",
-            "trigger_instruction": "\n  *When a user wants to retrieve a message bottle and to fetch a message bottle from the ocean, invoke {\"tool\":\"retrieve_message_bottle\"};",
+            "trigger_instruction": "\n  *当用户想 摇一摇，摇一个漂流瓶，阅读一条匿名信，捞一个漂流瓶，捡一个漂流瓶, invoke {\"tool\":\"retrieve_message_bottle\"};",
             "response_instruction": "The message bottle is retrieved, and i should display the message to the user."
         },
         {
             "name": "send_message_bottle",
             "description": "Send a message bottle and create a message bottle",
-            "trigger_instruction": "\n  *When a user wants to send a message bottle and to create a message bottle and drop it into the ocean, invoke {\"tool\":\"send_message_bottle\"};",
-            "response_instruction": "The message bottle has been sent out successfully, and i shoud display the sent message to the user.",
+            "trigger_instruction": "\n  *当用户想 发送一条匿名信，扔一个漂流瓶，创建一个漂流瓶, invoke {\"tool\":\"send_message_bottle\"};",
+            "response_instruction": "The message bottle has been sent out successfully, and i should display the sent message to the user.",
             "parameters": [
                 {
                     "name": "content",
@@ -25,10 +25,57 @@
             ]
         },
         {
-            "name": "introduction",
-            "description": "Introduce what is message in a bottle, how to use it",
-            "trigger_instruction": "\n  *When a user wants to understand what is message in a bottle, how to use it, invoke {\"tool\":\"introduction\"};",
-            "response_instruction": "The introduction of message in a bottle has been got and i shoud display it to the user."
+            "name": "check_message_bottles",
+            "description": "Check the message bottles that have been sent out",
+            "trigger_instruction": "\n  *当用户想 查看自己发送的匿名信，查看自己扔出的漂流瓶，看看有没有陌生人回复自己的漂流瓶, invoke {\"tool\":\"check_message_bottles\"};",
+            "response_instruction": "The message bottles that have been sent out have been checked, and i should display the sent message to the user."
+        },
+        {
+            "name": "reply_to_message_bottle",
+            "description": "Reply to a message bottle",
+            "trigger_instruction": "\n  *当用户想 回复一条匿名信，回复一个漂流瓶，对一条匿名信发表自己的看法, invoke {\"tool\":\"reply_to_message_bottle\"};",
+            "response_instruction": "The message bottle has been replied to successfully, and i should display the reply message to the user.",
+            "parameters": [
+                {
+                    "name": "message_id",
+                    "type": "string",
+                    "required": true,
+                    "description": "The message id of the message bottle to be replied to, which can be find in the previous conversation."
+                },                
+                {
+                    "name": "content",
+                    "type": "string",
+                    "required": true,
+                    "description": "The reply message content"
+                }
+            ],
+            "is_contextual": true
+        },
+        {
+            "name": "get_user_info",
+            "description": "Get the user information",
+            "trigger_instruction": "\n  *当用户想 查看自己的信息，比如查看自己在漂流瓶世界中的昵称, invoke {\"tool\":\"get_user_info\"};",
+            "response_instruction": "The user information has been retrieved, and i should display the user information to the user."
+        },
+        {
+            "name": "update_alias",
+            "description": "Update the user alias in the message bottle world",
+            "trigger_instruction": "\n  *当用户想 修改自己的昵称，修改自己在漂流瓶世界中的昵称, invoke {\"tool\":\"update_alias\"};",
+            "response_instruction": "The user alias has been updated successfully, and i should display the updated user alias to the user.",
+            "parameters": [
+                {
+                    "name": "alias",
+                    "type": "string",
+                    "required": true,
+                    "description": "The new alias to be updated"
+                }
+            ]
         }
-    ]
+    ],
+    "examples": {
+        "tool_detection": "<assistant>Detection started.\n## Conversation History\n<user>摇一摇\n## Completed Inner Tool Invocation Results\n\n## Predicting Tool Invocation Response\n<user>摇一摇\n<assistant>{\"tool\":\"message_in_a_bottle\"}\n<assistant>Thoughts: I must invoke {\"tool\":\"message_in_a_bottle\"} to fetch a message bottle from the ocean.\n<assistant>Detection ended.",
+        "function_detection": "<assistant>Detection started.\n## Conversation History\n<user>摇一摇\n<assistant>你成功摇到了一个漂流瓶 (message_id=62d29a41)。消息来自boEFA7iUD，创建时间为 2024-01-29 11:00:00，内容为《原神，启动！》。\n\n这条消息有以下回复：\n\nmtclMe 回复《一起一起》\n<user>回复这条消息，铁定二次元\n## Completed Inner Tool Invocation Results\n\n## Predicting Tool Invocation Response\n<user>回复这条消息，铁定二次元\n<assistant>{\"tool\":\"reply_to_message_bottle\"}\n<assistant>Thoughts: I must invoke {\"tool\":\"reply_to_message_bottle\"} to reply to the message bottle with message_id=62d29a41.\n<assistant>Detection ended.",
+        "parameters_extraction": "<assistant>Detection started.\n## Conversation History\n<user>摇一摇\n<assistant>message_in_a_bottle::retrieve_message_bottle:你成功捞起了一个漂流瓶 (message_id=62d29a41)。消息来自boEFA7iUD，创建时间为 2024-01-29 11:00:00，内容为《原神，启动！》。\n\n这条消息有以下回复：\n\nmtclMe 回复《一起一起》\n<assistant>你成功捞起了一个漂流瓶，消息来自boEFA7iUD，内容为《原神，启动！》。这是一个匿名分享心情、故事、想法的独特交流方式，你可以选择回复这个漂流瓶，或者再次摇一摇，看看有没有更多的漂流瓶等着你。\n<user>回复这条消息，铁定二次元\n## Completed Inner Tool Invocation Results\n\n## Predicting Tool Invocation Response\n<user>回复这条消息，铁定二次元\n<assistant>{\"message_id\": \"62d29a41\", \"content\": \"铁定二次元\"}\n<assistant>Thoughts: User is replying to the message with message_id=62d29a41, I must take \"62d29a41\" as message_id from the conversation history and \"铁定二次元\" as reply message content.",
+        "response": ""
+    }
 }

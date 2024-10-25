@@ -10,7 +10,7 @@ from lightagent.prompts.prompt_generator import PromptGenerator
 from lightagent.storage.conversation_manager import ConversationManager
 from lightagent.storage.logger import Logger
 from lightagent.storage.sqlite import SQLiteStorage    
-from lightagent.data_schemas import Message
+from lightagent.data_schemas import Message, UserProfile
 from lightagent.llms import GPT35, Phi3
 from lightagent.plugins import PluginRunner
 from lightagent.LightAgent import LightAgent
@@ -25,22 +25,23 @@ def main(args):
     logger = Logger(db)
     agent = LightAgent(PromptGenerator(), GPT35(), cm, PluginRunner(), logger)
 
+    user = UserProfile(str(uuid.uuid4()), "Olivier", datetime.now())
+    conv_id = agent.initiate_conversation(user)
 
     query = ""
-    conv_id = str(uuid.uuid4())
 
     while True:
         msg_id = str(uuid.uuid4())
         query = input("Enter a query: ")
         print(f"User: {query}")
         if query == "new":
-            conv_id = str(uuid.uuid4())
+            conv_id = agent.initiate_conversation(user)
             continue
         
         if query == "exit":
             break
 
-        message = Message(msg_id, query, datetime.now(), conv_id,  ["web_search", "phone_assistant"])
+        message = Message(msg_id, query, datetime.now(), conv_id,  ["web_search", "message_in_a_bottle"])
         
         new_message, metrics = agent.chat(message)
         print(f"LightAgent: {new_message.response}")

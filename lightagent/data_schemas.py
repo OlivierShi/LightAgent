@@ -28,14 +28,16 @@ class Function:
     def __init__(self, name,
                  description,
                  trigger_instruction,
-                 parameters: List[Parameter] = []):
+                 parameters: List[Parameter] = [],
+                 is_contextual: bool = False):
         self.name = name
         self.description = description
         self.trigger_instruction = trigger_instruction
         self.parameters = parameters
+        self.is_contextual = is_contextual
 
     def __str__(self) -> str:
-        return f"Function: {self.name}, {self.description}, {self.trigger_instruction}, {self.parameters}"
+        return f"Function: {self.name}, {self.description}, {self.trigger_instruction}, {self.parameters}, {self.is_contextual}"
 
     @staticmethod
     def from_json(data):
@@ -43,7 +45,8 @@ class Function:
         description = data.get("description", "")
         trigger_instruction = data.get("trigger_instruction", "")
         parameters = data.get("parameters", [])
-        return Function(name, description, trigger_instruction, [Parameter.from_json(p) for p in parameters])
+        is_contextual = data.get("is_contextual", False)
+        return Function(name, description, trigger_instruction, [Parameter.from_json(p) for p in parameters], is_contextual)
 
 class Plugin:
     def __init__(self, name,
@@ -127,6 +130,14 @@ class Context:
 
     def __str__(self) -> str:
         return f"Context: {self.conversation_id}, {[str(msg) for msg in self.conversation_history]}, {self.user_profile}, {self.inner_tool_invokation_results}, {self.enabled_plugins}"
+    
+    def to_plain_dict(self) -> dict:
+        return {
+            "conversation_id": self.conversation_id,
+            "user_id": self.user_profile.id,
+            "user_location": self.user_profile.location,
+            "user_name": self.user_profile.name,
+        }
 
 
 class Conversation:
